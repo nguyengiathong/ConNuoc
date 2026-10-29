@@ -21,9 +21,9 @@ jobs:
       CONNUOC_KEY_ALIAS: ${{ secrets.CONNUOC_KEY_ALIAS }}
       CONNUOC_KEY_PASSWORD: ${{ secrets.CONNUOC_KEY_PASSWORD }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
