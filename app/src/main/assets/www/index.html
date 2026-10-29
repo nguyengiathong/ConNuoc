@@ -223,6 +223,7 @@ input[type="text"] { font-family: var(--f-mono); font-size: 14px; }
 
 .chart { position: relative; width: 100%; }
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart svg { touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
 .chart text { font-family: var(--f-mono); font-size: 10.5px; fill: var(--ink-3); }
 .chart .lab { font-size: 10.5px; fill: var(--ink-2); }
 .chart .lab.hw { fill: var(--ink); font-weight: 500; }
@@ -1436,13 +1437,18 @@ if (typeof module !== 'undefined') module.exports = AmLich;
     el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Biểu đồ mực nước ${esc($('#title').textContent)}">${g}</svg><div class="tip" id="tip" hidden></div>`;
     chartState = { S, D, X, Y, m, pw, W, prim, sec };
     const hit = el.querySelector('#hit');
-    hit.addEventListener('pointermove', onHover); hit.addEventListener('pointerleave', () => { el.querySelector('#tip').hidden = true; for (const id of ['#xh', '#xd', '#xd2']) el.querySelector(id).setAttribute('visibility', 'hidden'); });
+    hit.addEventListener('pointerdown', onHover); hit.addEventListener('pointermove', onHover); hit.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') hideChartTip(); });
     $('#chartMeta').textContent = `${S.primary === 'model' ? 'Mô hình EOT20' : 'Trạm ' + state.gauge.name} · bước ${S.times.length > 1 ? Math.round((S.times[1] - S.times[0]) / MIN) : 0} phút`;
     const lg = [`<span><i></i>${S.primary === 'model' ? 'Mô hình EOT20' : 'Hằng số trạm ' + esc(state.gauge.name)}</span>`];
     if (sec) lg.push(`<span><i class="g"></i>${S.primary === 'model' ? 'Trạm ' + esc(state.gauge.name) + ' (' + NF1.format(state.gauge.distKm) + ' km)' : 'Mô hình EOT20'}</span>`);
     lg.push('<span><i class="hw"></i>Nước lớn</span><span><i class="lw"></i>Nước ròng</span>');
     if (now > S.t0 && now < S.t1) lg.push('<span><i class="now"></i>Bây giờ</span>');
     $('#chartLegend').innerHTML = lg.join('');
+  }
+  // a mouse reading goes when the pointer leaves the chart; a touch reading stays until a tap elsewhere
+  function hideChartTip() {
+    const el = $('#chart'); const tip = el.querySelector('#tip'); if (!tip) return;
+    tip.hidden = true; for (const id of ['#xh', '#xd', '#xd2']) el.querySelector(id).setAttribute('visibility', 'hidden');
   }
   function onHover(e) {
     const c = chartState; if (!c) return; const el = $('#chart');
@@ -1547,6 +1553,7 @@ if (typeof module !== 'undefined') module.exports = AmLich;
     $('#copyEx').onclick = () => copyText(csvExtremes(), 'bảng nước lớn/ròng');
     $('#copyTs').onclick = () => copyText(csvSeries(), 'chuỗi mực nước');
     let rt = 0; new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(() => { if (state.series) renderChart(state.series, currentDatum()); }, 80); }).observe($('#chart'));
+    document.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse' && !e.target.closest('#chart')) hideChartTip(); });
     const themeCb = () => { LUT = null; drawLegend(); Map2.themeChanged(); };
     try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', themeCb); } catch (e) { /* old browsers */ }
     new MutationObserver(themeCb).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });

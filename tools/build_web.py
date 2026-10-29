@@ -49,6 +49,31 @@ PAKO_NEW = "vendor/pako.min.js"
 
 SHIM = '<script src="android.js"></script>\n'
 
+# The water-level chart only reacted to mouse hover. On a touch screen a tap shows the reading,
+# a sideways drag scrubs along the curve (vertical swipes still scroll the page), and the
+# reading stays after the finger lifts until the next tap outside the chart.
+TOUCH_FIXES = [
+    (".chart svg { display: block; width: 100%; height: auto; overflow: visible; }",
+     ".chart svg { display: block; width: 100%; height: auto; overflow: visible; }\n"
+     ".chart svg { touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }",
+     "chart CSS"),
+    ("hit.addEventListener('pointermove', onHover); hit.addEventListener('pointerleave', () => { el.querySelector('#tip').hidden = true; for (const id of ['#xh', '#xd', '#xd2']) el.querySelector(id).setAttribute('visibility', 'hidden'); });",
+     "hit.addEventListener('pointerdown', onHover); hit.addEventListener('pointermove', onHover); hit.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') hideChartTip(); });",
+     "chart hover listeners"),
+    ("  function onHover(e) {",
+     """  // a mouse reading goes when the pointer leaves the chart; a touch reading stays until a tap elsewhere
+  function hideChartTip() {
+    const el = $('#chart'); const tip = el.querySelector('#tip'); if (!tip) return;
+    tip.hidden = true; for (const id of ['#xh', '#xd', '#xd2']) el.querySelector(id).setAttribute('visibility', 'hidden');
+  }
+  function onHover(e) {""",
+     "chart hover handler"),
+    ("}).observe($('#chart'));",
+     "}).observe($('#chart'));\n"
+     "    document.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse' && !e.target.closest('#chart')) hideChartTip(); });",
+     "chart resize observer"),
+]
+
 
 def fetch(url, headers=None):
     req = urllib.request.Request(url, headers=headers or {})
@@ -119,6 +144,8 @@ def main():
     html = replace_once(html, LOADER_OLD, LOADER_NEW, "embedded-data loader")
     html = replace_once(html, FONT_LINKS_OLD, FONT_LINKS_NEW, "Google Fonts link")
     html = replace_once(html, PAKO_OLD, PAKO_NEW, "pako CDN URL")
+    for old, new, what in TOUCH_FIXES:
+        html = replace_once(html, old, new, what)
     html = html.rstrip("\n") + "\n" + SHIM
 
     WWW.mkdir(parents=True, exist_ok=True)
