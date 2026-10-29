@@ -44,9 +44,11 @@ APK nằm ở `app/build/outputs/apk/release/app-release.apk`.
 
 ## Ký ứng dụng
 
-Không có cấu hình gì thêm thì APK được ký bằng khóa debug của máy build. Khóa debug trên GitHub
-Actions đổi theo từng lần chạy, nên khi cài bản mới có thể phải gỡ bản cũ trước. Để các bản sau
-cài đè được, tạo khóa riêng một lần:
+APK được ký bằng khóa cố định `app/debug.keystore` có sẵn trong repo, nên mọi bản build (trên
+GitHub Actions hay trên máy) cùng chữ ký và cài đè lên bản cũ được. Khóa này công khai; với ứng
+dụng không chứa dữ liệu riêng tư và không xin quyền gì như Con Nước thì chấp nhận được.
+
+Muốn dùng khóa riêng, tạo một lần:
 
 ```bash
 keytool -genkeypair -v -keystore connuoc.jks -alias connuoc -keyalg RSA -keysize 2048 -validity 10000
@@ -55,6 +57,7 @@ keytool -genkeypair -v -keystore connuoc.jks -alias connuoc -keyalg RSA -keysize
 rồi thêm vào *Settings → Secrets and variables → Actions* của repo:
 `CONNUOC_KEYSTORE_BASE64` (kết quả `base64 -w0 connuoc.jks`), `CONNUOC_KEYSTORE_PASSWORD`,
 `CONNUOC_KEY_ALIAS`, `CONNUOC_KEY_PASSWORD`. Giữ file `connuoc.jks` cẩn thận, không commit vào repo.
+Đổi khóa thì phải gỡ bản đang cài một lần trước khi cài bản ký bằng khóa mới.
 
 ## Nguồn dữ liệu
 
