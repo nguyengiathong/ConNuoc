@@ -1,0 +1,1589 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>Con Nước</title><script>(function(){var t="dark";try{t=localStorage.getItem("connuoc-theme")||"dark"}catch(e){}if(t!=="auto")document.documentElement.setAttribute("data-theme",t)})();</script><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="description" content="Dự báo thủy triều thiên văn tại mọi kinh–vĩ độ từ mô hình EOT20">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+:root {
+  --bg: #f2f5f7;
+  --surface: #ffffff;
+  --surface-2: #eaf0f4;
+  --ink: #0e1d29;
+  --ink-2: #475a69;
+  --ink-3: #6f8291;
+  --rule: #d5dfe6;
+  --rule-strong: #b7c6d1;
+  --water: #1d5fa6;
+  --water-soft: rgba(29, 95, 166, 0.13);
+  --overprint: #a8176f;
+  --overprint-soft: rgba(168, 23, 111, 0.1);
+  --gauge: #c9561f;
+  --land: #e3d8b6;
+  --coast: #978755;
+  --sea0: #f3f8fc;
+  --grat: rgba(14, 29, 41, 0.10);
+  --shadow: 0 1px 2px rgba(14, 29, 41, 0.06), 0 4px 16px rgba(14, 29, 41, 0.05);
+  --radius: 10px;
+  --f-ui: "Be Vietnam Pro", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0a131b;
+    --surface: #0f1b25;
+    --surface-2: #152533;
+    --ink: #e3ecf2;
+    --ink-2: #a3b5c3;
+    --ink-3: #7a8fa1;
+    --rule: #213648;
+    --rule-strong: #2f4a60;
+    --water: #5ea6ee;
+    --water-soft: rgba(94, 166, 238, 0.16);
+    --overprint: #ec6cbd;
+    --overprint-soft: rgba(236, 108, 189, 0.14);
+    --gauge: #ec8a5c;
+    --land: #2b2a23;
+    --coast: #6c664f;
+    --sea0: #0c1822;
+    --grat: rgba(227, 236, 242, 0.08);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.25);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0a131b;
+  --surface: #0f1b25;
+  --surface-2: #152533;
+  --ink: #e3ecf2;
+  --ink-2: #a3b5c3;
+  --ink-3: #7a8fa1;
+  --rule: #213648;
+  --rule-strong: #2f4a60;
+  --water: #5ea6ee;
+  --water-soft: rgba(94, 166, 238, 0.16);
+  --overprint: #ec6cbd;
+  --overprint-soft: rgba(236, 108, 189, 0.14);
+  --gauge: #ec8a5c;
+  --land: #2b2a23;
+  --coast: #6c664f;
+  --sea0: #0c1822;
+  --grat: rgba(227, 236, 242, 0.08);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+* { box-sizing: border-box; }
+html, body { background: var(--bg); }
+body {
+  color: var(--ink);
+  font-family: var(--f-ui);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-inline: 16px;
+  padding-block: 0 40px;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--overprint); outline-offset: 2px; }
+.mono, .num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+
+/* ---------- header ---------- */
+.top {
+  max-width: 1320px; margin: 0 auto;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding-block: 22px 18px;
+  border-bottom: 1px solid var(--rule);
+}
+.brand { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.brand h1 {
+  margin: 0; font-size: 30px; line-height: 1; font-weight: 700; letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 10px;
+}
+.brand h1 svg { width: 30px; height: 30px; flex: none; }
+.brand p { margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.badge {
+  font-family: var(--f-mono); font-size: 12px; color: var(--ink-2);
+  border: 1px solid var(--rule-strong); border-radius: 999px; padding: 3px 10px; white-space: nowrap;
+}
+
+/* ---------- layout ---------- */
+.app {
+  max-width: 1320px; margin: 20px auto 0;
+  display: grid; grid-template-columns: minmax(330px, 410px) minmax(0, 1fr); gap: 22px; align-items: start;
+}
+@media (max-width: 980px) { .app { grid-template-columns: minmax(0, 1fr); } }
+.panel { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+.loc, .opts { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 981px) { .panel { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); } }
+.box {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.box > h2, .sec-h {
+  margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3);
+}
+.loc { padding: 14px; display: grid; gap: 12px; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.field { display: grid; gap: 5px; min-width: 0; }
+.field > label, .lbl { font-size: 12.5px; color: var(--ink-2); font-weight: 500; }
+input[type="text"], input[type="date"], select {
+  height: 38px; border: 1px solid var(--rule-strong); border-radius: 8px; background: var(--surface);
+  padding: 0 10px; min-width: 0; width: 100%;
+}
+input[type="text"] { font-family: var(--f-mono); font-size: 14px; }
+.coord-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.btn {
+  height: 38px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--rule-strong);
+  background: var(--surface); cursor: pointer; font-weight: 500; white-space: nowrap;
+}
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.btn.primary:hover { opacity: 0.9; background: var(--ink); }
+.btn.small { height: 30px; padding: 0 10px; font-size: 13px; }
+.hint { font-size: 12.5px; color: var(--ink-3); margin: 0; }
+.err { color: var(--overprint); font-size: 13px; margin: 0; }
+
+/* map */
+.map-wrap { position: relative; border-radius: 8px; overflow: hidden; border: 1px solid var(--rule); background: var(--sea0); }
+.map-wrap canvas { display: block; width: 100%; height: 340px; touch-action: none; cursor: crosshair; }
+@media (max-width: 560px) { .map-wrap canvas { height: 290px; } }
+.map-ctl { position: absolute; right: 8px; top: 8px; display: grid; gap: 4px; }
+.map-ctl button {
+  width: 32px; height: 32px; border-radius: 7px; border: 1px solid var(--rule-strong);
+  background: var(--surface); cursor: pointer; font-size: 17px; line-height: 1; display: grid; place-items: center;
+}
+.map-ctl button:hover { background: var(--surface-2); }
+.map-ctl svg { width: 16px; height: 16px; }
+.map-coord {
+  position: absolute; left: 8px; bottom: 8px; font-family: var(--f-mono); font-size: 11px; color: var(--ink-2);
+  background: color-mix(in srgb, var(--surface) 85%, transparent); padding: 2px 6px; border-radius: 5px; pointer-events: none;
+}
+.legend { display: grid; gap: 4px; }
+.legend .bar { height: 8px; border-radius: 4px; }
+.legend .ticks { position: relative; height: 14px; font-family: var(--f-mono); font-size: 10.5px; color: var(--ink-3); }
+.legend .ticks span { position: absolute; transform: translateX(-50%); }
+.legend .ticks span:first-child { transform: none; }
+.legend .ticks span:last-child { transform: translateX(-100%); }
+.legend-keys { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink-2); }
+.legend-keys i { display: inline-block; vertical-align: -1px; margin-right: 5px; }
+.k-sel { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--overprint); }
+.k-gauge { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 9px solid var(--gauge); }
+.k-port { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-2); }
+
+.status { font-size: 13px; color: var(--ink-2); display: grid; gap: 6px; }
+.status b { color: var(--ink); font-weight: 600; }
+.gauge-card {
+  border: 1px dashed var(--rule-strong); border-radius: 8px; padding: 9px 10px; display: grid; gap: 6px; font-size: 13px;
+}
+.gauge-card .gname { font-weight: 600; color: var(--ink); }
+
+.opts { padding: 14px; display: grid; gap: 12px; }
+.opts .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.seg { display: inline-flex; border: 1px solid var(--rule-strong); border-radius: 8px; overflow: hidden; width: 100%; }
+.seg button {
+  flex: 1; height: 34px; border: 0; background: var(--surface); cursor: pointer; font-size: 13.5px; padding: 0 6px;
+  border-right: 1px solid var(--rule);
+}
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); font-weight: 600; }
+.seg button:not([aria-pressed="true"]):hover { background: var(--surface-2); }
+
+/* ---------- results ---------- */
+.results { display: grid; gap: 18px; min-width: 0; }
+.head { display: grid; gap: 4px; }
+.head h2 { margin: 0; font-size: 24px; line-height: 1.2; letter-spacing: -0.01em; text-wrap: balance; }
+.head .sub { color: var(--ink-2); font-size: 14px; }
+.facts {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
+  border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow);
+}
+@media (max-width: 1180px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 460px) { .facts { grid-template-columns: minmax(0, 1fr); } }
+.fact { padding: 12px 14px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); display: grid; gap: 3px; align-content: start; }
+.fact dt { font-size: 11.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.fact dd { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.25; }
+.fact .note { font-size: 12.5px; color: var(--ink-2); font-weight: 400; }
+.fact .up { color: var(--water); }
+.chip {
+  display: inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px;
+  background: var(--surface-2); color: var(--ink-2); vertical-align: 2px;
+}
+.chip.spring { background: var(--water-soft); color: var(--water); }
+.chip.neap { background: var(--surface-2); color: var(--ink-3); }
+
+.srcbar { display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; }
+.srcbar .seg { width: auto; }
+.srcbar .seg { max-width: 100%; }
+.srcbar .seg button { padding: 0 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chk { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; color: var(--ink-2); cursor: pointer; }
+.chk input { width: 16px; height: 16px; accent-color: var(--gauge); }
+
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; }
+.card-h { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.card-h h3 { margin: 0; font-size: 16px; font-weight: 600; }
+.card-h .meta { font-size: 12.5px; color: var(--ink-3); }
+
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--f-mono); font-size: 10.5px; fill: var(--ink-3); }
+.chart .lab { font-size: 10.5px; fill: var(--ink-2); }
+.chart .lab.hw { fill: var(--ink); font-weight: 500; }
+.tip {
+  position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--rule-strong);
+  border-radius: 8px; padding: 7px 9px; font-size: 12.5px; box-shadow: var(--shadow); white-space: nowrap; z-index: 2;
+}
+.tip .t { font-family: var(--f-mono); color: var(--ink-2); font-size: 11.5px; }
+.tip .v { font-family: var(--f-mono); font-weight: 600; }
+.tip i { display: inline-block; width: 10px; height: 2px; vertical-align: 3px; margin-right: 6px; }
+.chart-legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-2); }
+.chart-legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--water); vertical-align: 4px; margin-right: 6px; }
+.chart-legend i.g { border-top: 2px dashed var(--gauge); }
+.chart-legend i.hw { width: 8px; height: 8px; border: 0; border-radius: 50%; background: var(--water); vertical-align: 0; }
+.chart-legend i.lw { width: 8px; height: 8px; border: 2px solid var(--water); border-radius: 50%; vertical-align: 0; }
+.chart-legend i.now { width: 0; height: 12px; border-top: 0; border-left: 2px dashed var(--overprint); vertical-align: -2px; }
+
+.tbl-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th { text-align: left; font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--rule-strong); white-space: nowrap; }
+td { padding: 7px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; }
+.ex { display: block; white-space: nowrap; font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: 13px; }
+.ex .h { color: var(--ink-2); margin-left: 6px; }
+.day { white-space: nowrap; font-weight: 600; }
+.lunar { display: block; white-space: nowrap; color: var(--ink-3); font-family: var(--f-mono); font-size: 12px; font-weight: 400; margin-top: 2px; }
+.lunar .moon { font-family: var(--f-ui); font-size: 11.5px; color: var(--overprint); margin-left: 4px; }
+tr.today td { background: var(--overprint-soft); }
+.rbar { display: flex; align-items: center; gap: 8px; min-width: 120px; }
+.rbar span.b { height: 6px; border-radius: 3px; background: var(--water); opacity: 0.85; }
+.rbar span.n { font-family: var(--f-mono); font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
+@media (max-width: 560px) { .rbar { min-width: 0; flex-wrap: wrap; gap: 4px; } .rbar span.b { display: none; } td, th { padding: 6px 5px; } .ex { font-size: 12.5px; } }
+.abar { height: 6px; border-radius: 3px; background: var(--water); opacity: 0.7; min-width: 1px; }
+td.cname { font-family: var(--f-mono); font-weight: 600; }
+.small { font-size: 12.5px; color: var(--ink-2); }
+
+.exports { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+textarea#csvOut { width: 100%; height: 140px; font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--rule-strong); border-radius: 8px; padding: 8px; background: var(--surface-2); }
+
+.notes { display: grid; gap: 12px; font-size: 14px; color: var(--ink-2); }
+.notes h3 { color: var(--ink); }
+.notes p { margin: 0; max-width: 75ch; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; max-width: 75ch; }
+.notes a { color: var(--water); }
+.vtab td, .vtab th { font-size: 12.5px; }
+.warnline { border-left: 3px solid var(--overprint); padding: 6px 10px; background: var(--overprint-soft); border-radius: 0 6px 6px 0; color: var(--ink); font-size: 13.5px; }
+.loading { color: var(--ink-3); font-size: 13px; }
+@media (prefers-reduced-motion: no-preference) {
+  .fade { animation: fade .25s ease-out; }
+  @keyframes fade { from { opacity: .4; } to { opacity: 1; } }
+}
+.map-coord:empty { display: none; }
+.top-r { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.theme-seg { width: auto; }
+.theme-seg button { flex: none; height: 30px; padding: 0 12px; font-size: 13px; }
+.foot { margin: 4px 0 0; color: var(--ink-3); max-width: 90ch; }
+
+</style>
+
+<header class="top">
+  <div class="brand">
+    <h1><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 20c3.5 0 3.5-3 7-3s3.5 3 7 3 3.5-3 7-3 3.5 3 7 3" fill="none" stroke="var(--water)" stroke-width="2.4" stroke-linecap="round"/><path d="M2 26c3.5 0 3.5-3 7-3s3.5 3 7 3 3.5-3 7-3 3.5 3 7 3" fill="none" stroke="var(--water)" stroke-width="2.4" stroke-linecap="round" opacity=".45"/><circle cx="22" cy="8.5" r="4.5" fill="none" stroke="var(--overprint)" stroke-width="2.2"/></svg>Con Nước</h1>
+    <p>Dự báo thủy triều thiên văn tại mọi kinh–vĩ độ</p>
+  </div>
+  <div class="top-r"><span class="badge">EOT20 · lưới 1/8° · 17 sóng + 17 sóng suy diễn</span><div class="seg theme-seg" id="theme" role="group" aria-label="Giao diện"><button type="button" data-v="light">Sáng</button><button type="button" data-v="dark">Tối</button><button type="button" data-v="auto">Theo máy</button></div></div>
+</header>
+
+<main class="app">
+  <aside class="panel">
+    <section class="box loc" aria-labelledby="h-loc">
+      <h2 id="h-loc">Vị trí</h2>
+      <div class="field">
+        <label for="coord">Vĩ độ, kinh độ</label>
+        <div class="coord-row">
+          <input id="coord" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="10.34, 107.07 hoặc 10°20'N 107°04'E">
+          <button id="go" class="btn primary" type="button">Dự báo</button>
+        </div>
+        <p id="coordErr" class="err" hidden></p>
+      </div>
+      <div class="field">
+        <label for="preset">Trạm, cửa biển Việt Nam</label>
+        <select id="preset"></select>
+      </div>
+      <div class="map-wrap">
+        <canvas id="map" aria-label="Bản đồ chọn vị trí. Bấm vào biển để chọn điểm dự báo; kéo để di chuyển; cuộn hoặc chụm để phóng to." tabindex="0"></canvas>
+        <div class="map-ctl">
+          <button type="button" id="zin" aria-label="Phóng to">+</button>
+          <button type="button" id="zout" aria-label="Thu nhỏ">−</button>
+          <button type="button" id="zsel" aria-label="Về điểm đang chọn"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 0v3M8 13v3M0 8h3M13 8h3" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        </div>
+        <div class="map-coord" id="mapCoord"></div>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <div class="bar" id="legendBar"></div>
+        <div class="ticks" id="legendTicks"></div>
+        <p class="hint">Màu biển: biên độ triều cường ước tính 2·(M2+S2+K1+O1). Phóng to để thấy từng ô lưới 1/8° của mô hình.</p>
+      </div>
+      <div class="legend-keys"><span><i class="k-sel"></i>Điểm chọn</span><span><i class="k-gauge"></i>Trạm triều ký</span><span><i class="k-port"></i>Cửa biển</span></div>
+      <div class="status" id="status" aria-live="polite"></div>
+    </section>
+
+    <section class="box opts" aria-labelledby="h-opt">
+      <h2 id="h-opt">Thời gian &amp; mốc cao độ</h2>
+      <div class="grid2">
+        <div class="field"><label for="start">Từ ngày</label><input id="start" type="date"></div>
+        <div class="field"><label for="tz">Múi giờ</label><select id="tz"></select></div>
+      </div>
+      <div class="field"><span class="lbl" id="lbl-days">Số ngày</span>
+        <div class="seg" id="days" role="group" aria-labelledby="lbl-days">
+          <button type="button" data-v="1">1</button><button type="button" data-v="3">3</button><button type="button" data-v="7">7</button><button type="button" data-v="15">15</button><button type="button" data-v="30">30</button>
+        </div>
+      </div>
+      <div class="field"><span class="lbl" id="lbl-datum">Mốc cao độ</span>
+        <div class="seg" id="datum" role="group" aria-labelledby="lbl-datum">
+          <button type="button" data-v="MSL">TB (MSL)</button><button type="button" data-v="LAT">Thấp nhất (LAT)</button><button type="button" data-v="CD">Số 0 hải đồ</button>
+        </div>
+        <p class="hint" id="datumHint"></p>
+      </div>
+    </section>
+  </aside>
+
+  <section class="results" id="results" aria-live="polite">
+    <div class="head">
+      <h2 id="title">Đang tải dữ liệu mô hình…</h2>
+      <div class="sub" id="subtitle"></div>
+    </div>
+    <dl class="facts" id="facts"></dl>
+    <div class="srcbar" id="srcbar" hidden>
+      <div class="seg" id="source" role="group" aria-label="Nguồn dự báo">
+        <button type="button" data-v="model">Mô hình EOT20</button><button type="button" data-v="gauge" id="srcGauge">Trạm đo</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h3>Đường mực nước</h3><span class="meta" id="chartMeta"></span></div>
+      <div class="chart" id="chart"></div>
+      <div class="chart-legend" id="chartLegend"></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h3>Nước lớn, nước ròng theo ngày</h3><span class="meta" id="tableMeta"></span></div>
+      <div class="tbl-wrap"><table id="daily"></table></div>
+      <div class="exports">
+        <button class="btn small" type="button" id="copyEx">Sao chép bảng nước lớn/ròng (CSV)</button>
+        <button class="btn small" type="button" id="copyTs">Sao chép chuỗi mực nước (CSV)</button>
+        <select id="step" aria-label="Bước thời gian của chuỗi" style="width:auto;height:30px;font-size:13px"><option value="10">mỗi 10 phút</option><option value="30">mỗi 30 phút</option><option value="60" selected>mỗi giờ</option></select>
+        <span class="small" id="copyMsg" role="status"></span>
+      </div>
+      <textarea id="csvOut" hidden aria-label="Dữ liệu CSV" readonly></textarea>
+    </div>
+    <div class="card">
+      <div class="card-h"><h3>Hằng số điều hòa tại điểm</h3><span class="meta" id="hcMeta"></span></div>
+      <div class="tbl-wrap"><table id="hcTable"></table></div>
+      <p class="small" id="hcNote"></p>
+    </div>
+    <p class="small foot">Triều thiên văn: không gồm nước dâng do bão, gió mùa hay lũ; không dùng thay bảng thủy triều chính thức cho dẫn đường hàng hải. Dữ liệu: EOT20 (DGFI-TUM, CC BY 4.0), hằng số trạm TICON-4 / NOAA / CHS qua openwatersio/tide-database, tính bằng @neaps/tide-predictor.</p>
+  </section>
+</main>
+
+<script>
+/*! @neaps/tide-predictor 0.11.0 — MIT License — https://github.com/openwatersio/neaps */
+var Neaps=(()=>{var B=Object.defineProperty;var Ke=Object.getOwnPropertyDescriptor;var ve=Object.getOwnPropertyNames;var ge=Object.prototype.hasOwnProperty;var Ne=(e,o)=>{for(var n in o)B(e,n,{get:o[n],enumerable:!0})},we=(e,o,n,s)=>{if(o&&typeof o=="object"||typeof o=="function")for(let a of ve(o))!ge.call(e,a)&&a!==n&&B(e,a,{get:()=>o[a],enumerable:!(s=Ke(o,a))||s.enumerable});return e};var Te=e=>we(B({},"__esModule",{value:!0}),e);var Lo={};Ne(Lo,{astro:()=>G,constituents:()=>ee,createTidePredictor:()=>oe,default:()=>oe,useStation:()=>Ao});var i=Math.PI/180,E=180/Math.PI,A=(e,o=0,n=0,s=0,a=0)=>e+o/60+n/3600+s/(3600*1e3)+a/(3600*1e6),_={terrestrialObliquity:[A(23,26,21.448),-A(0,0,4680.93),-A(0,0,1.55),A(0,0,1999.25),-A(0,0,51.38),-A(0,0,249.67),-A(0,0,39.05),A(0,0,7.12),A(0,0,27.87),A(0,0,5.79),A(0,0,2.45)].map((e,o)=>e*Math.pow(.01,o)),solarPerigee:[-77.06265000000002,1.7190199999968172,4591e-7,48e-8],solarLongitude:[280.46645,36000.76983,3032e-7],lunarInclination:[5.145],lunarLongitude:[218.3164591,481267.88134236,-.0013268,1/538841-1/65194e3],lunarNode:[125.044555,-1934.1361849,.0020762,1/467410,-1/60616e3],lunarPerigee:[83.353243,4069.0137111,-.0103238,-1/80053,1/18999e3]},Oe=(e,o)=>{let n=[];return e.forEach((s,a)=>{n.push(s*Math.pow(o,a))}),n.reduce((s,a)=>s+a)},Pe=(e,o)=>{let n=[];return e.forEach((s,a)=>{n.push(s*a*Math.pow(o,a-1))}),n.reduce((s,a)=>s+a)},ae=e=>(k(e)-2451545)/36525,k=e=>{let o=e.getUTCFullYear(),n=e.getUTCMonth()+1,s=e.getUTCDate()+e.getUTCHours()/24+e.getUTCMinutes()/1440+e.getUTCSeconds()/(1440*60)+e.getUTCMilliseconds()/(1440*60*1e3);n<=2&&(o=o-1,n=n+12);let a=Math.floor(o/100),l=2-a+Math.floor(a/4);return Math.floor(365.25*(o+4716))+Math.floor(30.6001*(n+1))+s+l-1524.5},V=(e,o,n)=>{e=i*e,o=i*o,n=i*n;let s=Math.cos(o)*Math.cos(n)-Math.sin(o)*Math.sin(n)*Math.cos(e);return E*Math.acos(s)},Ae=(e,o,n)=>{e=i*e,o=i*o,n=i*n;let s=Math.cos(.5*(n-o))/Math.cos(.5*(n+o))*Math.tan(.5*e),a=Math.sin(.5*(n-o))/Math.sin(.5*(n+o))*Math.tan(.5*e);return s=Math.atan(s),a=Math.atan(a),s=s-.5*e,a=a-.5*e,-(s+a)*E},X=(e,o,n)=>{e=i*e,o=i*o,n=i*n;let s=Math.cos(.5*(n-o))/Math.cos(.5*(n+o))*Math.tan(.5*e),a=Math.sin(.5*(n-o))/Math.sin(.5*(n+o))*Math.tan(.5*e);return s=Math.atan(s),a=Math.atan(a),s=s-.5*e,a=a-.5*e,(s-a)*E},Le=(e,o,n)=>{let s=i*V(e,o,n),a=i*X(e,o,n);return E*Math.atan(Math.sin(2*s)*Math.sin(a)/(Math.sin(2*s)*Math.cos(a)+.3347))},Ie=(e,o,n)=>{let s=i*V(e,o,n),a=i*X(e,o,n),l=Math.sin(s)**2*Math.sin(2*a)/(Math.sin(s)**2*Math.cos(2*a)+.0727);return E*.5*Math.atan(l)},se=(e,o)=>(e%o+o)%o,G=e=>{let o={},n={s:_.lunarLongitude,h:_.solarLongitude,p:_.lunarPerigee,N:_.lunarNode,pp:_.solarPerigee,90:[90],omega:_.terrestrialObliquity,i:_.lunarInclination},s=1/(24*365.25*100);for(let r in n)o[r]={value:se(Oe(n[r],ae(e)),360),speed:Pe(n[r],ae(e))*s};let a={I:V,xi:Ae,nu:X,nup:Le,nupp:Ie};Object.keys(a).forEach(r=>{let t=a[r];o[r]={value:se(t(o.N.value,o.i.value,o.omega.value),360),speed:null}});let l={value:(k(e)-Math.floor(k(e)))*360,speed:15};return o["T+h-s"]={value:l.value+o.h.value-o.s.value,speed:l.speed+o.h.speed-o.s.speed},o.P={value:o.p.value-o.xi.value%360,speed:null},o},H={Mm:e=>ye(i*e.N.value,i*e.p.value),Mf:e=>be(i*e.N.value),O1:e=>Ee(i*e.N.value),K1:e=>De(i*e.N.value),J1:e=>_e(i*e.N.value),M1B:e=>ze(i*e.N.value,i*e.p.value),M1C:e=>te(i*e.N.value,i*e.p.value),M1:e=>te(i*e.N.value,i*e.p.value),M1A:e=>Ue(i*e.N.value,i*e.p.value),M2:e=>ue(i*e.N.value),K2:e=>He(i*e.N.value),M3:e=>Re(i*e.N.value),L2:e=>Be(i*e.N.value,i*e.p.value),gamma2:e=>$e(i*e.N.value,i*e.p.value),alpha2:e=>Qe(i*e.p.value,i*e.pp.value),delta2:e=>Fe(i*e.N.value),xi2:e=>re(i*e.N.value),eta2:e=>re(i*e.N.value)};function ye(e,o){return{f:1-.1311*Math.cos(e)+.0538*Math.cos(2*o)+.0205*Math.cos(2*o-e),u:0}}function be(e){return{f:1.084+.415*Math.cos(e)+.039*Math.cos(2*e),u:-23.7*Math.sin(e)+2.7*Math.sin(2*e)-.4*Math.sin(3*e)}}function Ee(e){return{f:1.0176+.1871*Math.cos(e)-.0147*Math.cos(2*e),u:10.8*Math.sin(e)-1.34*Math.sin(2*e)+.19*Math.sin(3*e)}}function De(e){return{f:1.006+.115*Math.cos(e)-.0088*Math.cos(2*e)+6e-4*Math.cos(3*e),u:-8.86*Math.sin(e)+.68*Math.sin(2*e)-.07*Math.sin(3*e)}}function _e(e){return{f:1.1029+.1676*Math.cos(e)-.017*Math.cos(2*e)+.0016*Math.cos(3*e),u:-12.94*Math.sin(e)+1.34*Math.sin(2*e)-.19*Math.sin(3*e)}}function ue(e){return{f:1.0007-.0373*Math.cos(e)+2e-4*Math.cos(2*e),u:-2.14*Math.sin(e)}}function He(e){return{f:1.0246+.2863*Math.cos(e)+.0083*Math.cos(2*e)-.0015*Math.cos(3*e),u:-17.74*Math.sin(e)+.68*Math.sin(2*e)-.04*Math.sin(3*e)}}function Re(e){let o=ue(e);return{f:Math.pow(Math.sqrt(o.f),3),u:-3.21*Math.sin(e)}}function ze(e,o){return D(2.783*Math.sin(2*o)+.558*Math.sin(2*o-e)+.184*Math.sin(e),1+2.783*Math.cos(2*o)+.558*Math.cos(2*o-e)+.184*Math.cos(e))}function te(e,o){return D(Math.sin(o)+.2*Math.sin(o-e),2*(Math.cos(o)+.2*Math.cos(o-e)))}function Ue(e,o){return D(-.3593*Math.sin(2*o)-.2*Math.sin(e)-.066*Math.sin(2*o-e),1+.3593*Math.cos(2*o)+.2*Math.cos(e)+.066*Math.cos(2*o-e))}function $e(e,o){return D(.147*Math.sin(2*(e-o)),1+.147*Math.cos(2*(e-o)))}function Qe(e,o){return D(-.0446*Math.sin(e-o),1-.0446*Math.cos(e-o))}function Fe(e){return D(.477*Math.sin(e),1-.477*Math.cos(e))}function re(e){return D(-.439*Math.sin(e),1+.439*Math.cos(e))}function Be(e,o){return D(-.2505*Math.sin(2*o)-.1102*Math.sin(2*o-e)-.0156*Math.sin(2*o-2*e)-.037*Math.sin(e),1-.2505*Math.cos(2*o)-.1102*Math.cos(2*o-e)-.0156*Math.cos(2*o-2*e)-.037*Math.cos(e))}function D(e,o){return{f:Math.sqrt(e*e+o*o),u:E*Math.atan2(e,o)}}var Je={Mm:e=>({f:je(e),u:0}),Mf:e=>({f:We(e),u:eo(e)}),O1:e=>({f:Me(e),u:oo(e)}),K1:e=>({f:Ge(e),u:so(e)}),J1:e=>({f:qe(e),u:no(e)}),OO1:e=>({f:ke(e),u:ao(e)}),M2:e=>({f:Y(e),u:pe(e)}),K2:e=>({f:Ve(e),u:ro(e)}),L2:e=>({f:Ze(e),u:to(e)}),M1:e=>({f:Xe(e),u:io(e)}),M3:e=>({f:Ye(e,3),u:lo(e,3)})};function je(e){let o=i*e.omega.value,n=i*e.i.value,s=i*e.I.value,a=(2/3-Math.pow(Math.sin(o),2))*(1-3/2*Math.pow(Math.sin(n),2));return(2/3-Math.pow(Math.sin(s),2))/a}function We(e){let o=i*e.omega.value,n=i*e.i.value,s=i*e.I.value,a=Math.pow(Math.sin(o),2)*Math.pow(Math.cos(.5*n),4);return Math.pow(Math.sin(s),2)/a}function Me(e){let o=i*e.omega.value,n=i*e.i.value,s=i*e.I.value,a=Math.sin(o)*Math.pow(Math.cos(.5*o),2)*Math.pow(Math.cos(.5*n),4);return Math.sin(s)*Math.pow(Math.cos(.5*s),2)/a}function qe(e){let o=i*e.omega.value,n=i*e.i.value,s=i*e.I.value,a=Math.sin(2*o)*(1-3/2*Math.pow(Math.sin(n),2));return Math.sin(2*s)/a}function ke(e){let o=i*e.omega.value,n=i*e.i.value,s=i*e.I.value,a=Math.sin(o)*Math.pow(Math.sin(.5*o),2)*Math.pow(Math.cos(.5*n),4);return Math.sin(s)*Math.pow(Math.sin(.5*s),2)/a}function Y(e){let o=i*e.omega.value,n=i*e.i.value,s=i*e.I.value,a=Math.pow(Math.cos(.5*o),4)*Math.pow(Math.cos(.5*n),4);return Math.pow(Math.cos(.5*s),4)/a}function Ge(e){let o=i*e.omega.value,n=i*e.i.value,s=i*e.I.value,a=i*e.nu.value,l=.5023*(Math.sin(2*o)*(1-3/2*Math.pow(Math.sin(n),2)))+.1681;return Math.pow(.2523*Math.pow(Math.sin(2*s),2)+.1689*Math.sin(2*s)*Math.cos(a)+.0283,.5)/l}function Ze(e){let o=i*e.P.value,n=i*e.I.value,s=Math.pow(1-12*Math.pow(Math.tan(.5*n),2)*Math.cos(2*o)+36*Math.pow(Math.tan(.5*n),4),.5);return Y(e)*s}function Ve(e){let o=i*e.omega.value,n=i*e.i.value,s=i*e.I.value,a=i*e.nu.value,l=.5023*(Math.sin(o)**2*(1-3/2*Math.sin(n)**2))+.0365;return Math.pow(.2523*Math.pow(Math.sin(s),4)+.0367*Math.pow(Math.sin(s),2)*Math.cos(2*a)+.0013,.5)/l}function Xe(e){let o=i*e.P.value,n=i*e.I.value,s=Math.pow(.25+1.5*Math.cos(n)*Math.cos(2*o)*Math.pow(Math.cos(.5*n),-.5)+2.25*Math.pow(Math.cos(n),2)*Math.pow(Math.cos(.5*n),-4),.5);return Me(e)*s}function Ye(e,o){return Math.pow(Y(e),o/2)}function eo(e){return-2*e.xi.value}function oo(e){return 2*e.xi.value-e.nu.value}function no(e){return-e.nu.value}function ao(e){return-2*e.xi.value-e.nu.value}function pe(e){return 2*e.xi.value-2*e.nu.value}function so(e){return-e.nup.value}function to(e){let o=i*e.I.value,n=i*e.P.value,s=E*Math.atan(Math.sin(2*n)/(1/6*Math.pow(Math.tan(.5*o),-2)-Math.cos(2*n)));return 2*e.xi.value-2*e.nu.value-s}function ro(e){return-2*e.nupp.value}function io(e){let o=i*e.I.value,n=i*e.P.value,s=E*Math.atan((5*Math.cos(o)-1)/(7*Math.cos(o)+1)*Math.tan(n));return e.xi.value-e.nu.value+s}function lo(e,o){return o/2*pe(e)}var co={iho:H,schureman:Je};function xo(e){if(!e)return H;let o=co[e];if(!o)throw new Error(`Unknown fundamentals: ${e}`);return o}var mo=1/3600;function Z(e,o){let n=0;for(let s=0;s<o.length;s++){let{A:a,w:l,phi:r}=o[s];n+=a*Math.cos(l*e+r)}return n}function F(e,o){let n=0;for(let s=0;s<o.length;s++){let{A:a,w:l,phi:r}=o[s];n-=a*l*Math.sin(l*e+r)}return n}function uo(e,o){let n=0;for(let s=0;s<o.length;s++){let{A:a,w:l,phi:r}=o[s];n-=a*l*l*Math.cos(l*e+r)}return n}function Mo(e,o,n,s){for(;;){let a=(e+o)/2;if(o-e<mo)return a;let l=F(a,s);if(l===0)return a;(n>0?l>0:l<0)?(e=a,n=l):o=a}}function ie(e,o,{startMs:n,isDoubleTide:s,prominenceThreshold:a,getParams:l}){let r=[],t=l(Math.max(0,e));if(t.length===0)return r;let d=0;for(let{w:v}of t)v>d&&(d=v);if(d===0)return r;let c=Math.PI/15,M=2*Math.PI,C=0,O=0;for(let{A:v,w:x}of t)x>=c&&x<=M&&v>C&&(C=v,O=x);O===0&&(O=d);let y=s?0:Math.PI/(1.85*O),L=Math.PI/(2*d),w=e,I=F(w,t);for(let v=w+L;v<=o+L;v+=L){let x=l(w);x!==t&&(t=x,I=F(w,t));let f=Math.min(v,o),S=F(f,t);if(I!==0&&S!==0&&(I>0?S<0:S>0)){let p=Mo(w,f,I,t);if(p>=e&&p<=o){let N=uo(p,t)<0;r.push({time:new Date(n+p*60*60*1e3),level:Z(p,t),high:N,low:!N,label:N?"High":"Low"})}}if(f>=o)break;w=f,I=S}let b=r.length;if(b>2){let f=function(m){let h=v[m],u=x[m];if(h<0||u>=b)return{prom:1/0,offending:!1};let T=Math.abs(r[m].level-r[h].level),K=Math.abs(r[u].level-r[m].level),P=Math.min(T,K),R=(r[m].time.getTime()-r[h].time.getTime())/36e5,z=(r[u].time.getTime()-r[m].time.getTime())/36e5,U=y>0&&(R<y&&r[m].high===r[h].high||z<y&&r[m].high===r[u].high);return{prom:P,offending:P<a||U}},S=function(){let m=-1,h=1/0;for(let u=x[0];x[u]<b;u=x[u]){let{prom:T,offending:K}=f(u);K&&T<h&&(h=T,m=u)}return{idx:m,prom:h}},v=new Int32Array(b),x=new Int32Array(b);for(let m=0;m<b;m++)v[m]=m-1,x[m]=m+1;let p=S();for(;p.idx!==-1;){let m=v[p.idx],h=x[p.idx];x[m]=h,v[h]=m,p=S()}let N=[];for(let m=0;m<b;m=x[m])N.push(r[m]);return N}return r}function Ce(e,o){return(e?o?.height?.high:o?.height?.low)??(o?.height?.type==="fixed"?0:1)}function po(e,o){if(typeof o>"u"||!o)return e;let n=Ce(e.high,o);return o.height?.type==="fixed"?e.level+=n:e.level*=n,e.high&&o.time?.high&&(e.time=new Date(e.time.getTime()+o.time.high*60*1e3)),e.low&&o.time?.low&&(e.time=new Date(e.time.getTime()+o.time.low*60*1e3)),e}function Co(e,o){return typeof o<"u"&&typeof o[e]<"u"?o[e]:{high:"High",low:"Low"}[e]}var $=24;function le(e,o,n){return o+e*(n-o)}function ho({timeline:e,constituents:o,constituentModels:n,start:s,fundamentals:a=H,prominenceThreshold:l=.01}){let r=G(s),t=s.getTime(),d=(e.items[e.items.length-1].getTime()-t)/36e5,c=o.find(x=>x.name==="M2")?.amplitude??0,M=o.find(x=>x.name==="M4")?.amplitude??0,C=o.find(x=>x.name==="MS4")?.amplitude??0,O=c>0&&(M+C)/c>.25;function y(x){let f=G(x),S=[];for(let p of o){if(p.amplitude===0)continue;let N=n[p.name];if(!N)continue;let m=i*N.value(r),h=i*N.speed,u=N.correction(f,a);S.push({A:p.amplitude*u.f,w:h,phi:m+i*u.u-p.phase})}return S}function L(){let x=y(new Date(t+Math.min($,d)/2*36e5)),f=$;return S=>{if(S>=f){let p=Math.min(f+$,d);x=y(new Date(t+(f+p)/2*36e5)),f+=$}return x}}let w={startMs:t,isDoubleTide:O,prominenceThreshold:l};function I({labels:x,offsets:f}={}){return ie(0,d,{...w,getParams:L()}).map(S=>(x&&(S.label=Co(S.high?"high":"low",x)),po(S,f)))}let b=36;function v({offsets:x}={}){if(!x){let u=L(),T=[];for(let K=0;K<e.items.length;K++){let P=e.hours[K];T.push({time:e.items[K],hour:P,level:Z(P,u(P))})}return T}let f=ie(-36,d+b,{...w,getParams:L()});if(f.length<2)throw new Error("At least two extremes are required for interpolation with offsets");let S=x.height?.type==="fixed",p=f.map(u=>{let T=(u.high?x.time?.high:x.time?.low)??0,K=Ce(u.high,x);return{subTime:u.time.getTime()+T*60*1e3,refTime:u.time.getTime(),refLevel:u.level,subLevel:S?u.level+K:u.level*K}}),N=L(),m=[],h=0;for(let u=0;u<e.items.length;u++){let T=e.items[u].getTime();for(;h<p.length-2&&p[h+1].subTime<T;)h++;let K=p[h],P=p[h+1],R=P.subTime-K.subTime,z=R>0?Math.max(0,Math.min(1,(T-K.subTime)/R)):0,U=(le(z,K.refTime,P.refTime)-t)/36e5,fe=Z(U,N(U)),ne=P.refLevel-K.refLevel,Se=le(ne!==0?(fe-K.refLevel)/ne:z,K.subLevel,P.subLevel);m.push({time:e.items[u],hour:e.hours[u],level:Se})}return m}return Object.freeze({getExtremesPrediction:I,getTimelinePrediction:v})}var he={M:{species:2},S:{species:2},N:{species:2},O:{species:1},P:{species:1},Q:{species:1},J:{species:1},T:{species:2},R:{species:2},L:{species:2},nu:{species:2},lambda:{species:2}},fo={species:1},de={species:2};function So(e){let o=d=>new Error(`Unable to parse compound constituent "${e}": ${d}`),n=e;(e.startsWith("MA")||e.startsWith("MB"))&&e.length>2&&(n="M"+e.substring(2));let s=n.match(/^(.+?)(\d+)$/);if(!s)throw o("no trailing species digits");let a=s[1],l=parseInt(s[2],10);if(l===0)throw o("species is 0");let r=[],t=0;for(;t<a.length;){let d=0;for(;t<a.length&&a[t]>="0"&&a[t]<="9";)d=d*10+(a.charCodeAt(t)-48),t++;if(d===0&&(d=1),t>=a.length)throw o("trailing digits with no letter");if(a[t]==="("){t++;let M=[];for(;t<a.length&&a[t]!==")";){let C=ce(a,t);if(!C)throw o(`unrecognized character at position ${t}`);M.push(C),t+=C.length}if(t>=a.length||a[t]!==")")throw o("unclosed parenthesized group");if(t++,M.length===0)throw o("empty parenthesized group");for(let C of M){if(!xe(C))throw o(`unknown letter "${C}"`);r.push({letter:C,multiplier:d})}continue}let c=ce(a,t);if(!c)throw o(`unrecognized character at position ${t}`);if(!xe(c))throw o(`unknown letter "${c}"`);t+=c.length,r.push({letter:c,multiplier:d})}return{tokens:r,targetSpecies:l}}function ce(e,o){if(e.startsWith("nu",o)&&(o+2>=e.length||!Ko(e[o+2])))return"nu";if(e.startsWith("lambda",o))return"lambda";let n=e[o];return n>="A"&&n<="Z"?n:null}function Ko(e){return e>="a"&&e<="z"}function xe(e){return e==="A"||e==="B"?!1:e==="K"||e in he}function vo(e,o){if(e.some(n=>n.letter==="K")){let n=J(e,o,de);return n||J(e,o,fo)}return J(e,o,de)}function J(e,o,n){let s=e.map(t=>t.letter==="K"?n:he[t.letter]),a=t=>e[t].letter+s[t].species;if(e.length===1){let t=s[0].species;if(t>0&&o>t)return[{constituentKey:a(0),factor:o/t}];if(t===o)return[{constituentKey:a(0),factor:1}]}let l=new Array(e.length).fill(1),r=0;for(let t=0;t<e.length;t++)r+=e[t].multiplier*s[t].species;for(let t=e.length-1;t>=0&&r!==o;t--)l[t]=-1,r-=2*e[t].multiplier*s[t].species;return r!==o?null:e.map((t,d)=>({constituentKey:a(d),factor:l[d]*t.multiplier}))}function Q(e,o,n){let s;try{s=So(e)}catch{return null}let a=o>0?o:s.targetSpecies,l=vo(s.tokens,a);if(!l)return null;let r=[];for(let{constituentKey:t,factor:d}of l){let c=n[t];if(!c)return null;r.push({constituent:c,factor:d})}return r.length>0?r:null}var g={};function go({name:e,speed:o,xdo:n,aliases:s=[],members:a,nodalCorrection:l}){let r=n?No(n):null,t=null,d={name:e,speed:o,aliases:s,coefficients:r,get members(){return t||(a?t=a.map(([c,M])=>({constituent:g[c],factor:M})):t=To(l,e,n?.[0]??0)??[]),t},value(c){if(r)return wo(r,c);let M=0;for(let{constituent:C,factor:O}of d.members)M+=C.value(c)*O;return M},correction(c,M=H){let C=M[e];if(C)return C(c);let O=1,y=0;for(let{constituent:L,factor:w}of d.members){let I=L.correction(c,M);y+=w*I.u,O*=Math.pow(I.f,Math.abs(w))}return{u:y,f:O}}};return[d.name,...s].forEach(c=>{g[c]=d}),d}function No(e){return[e[0],e[1]-5,e[2]-5,e[3]-5,e[4]-5,e[5]-5,5-e[6]]}function wo(e,o){let n=[o["T+h-s"].value,o.s.value,o.h.value,o.p.value,-o.N.value,o.pp.value,90],s=0;for(let a=0;a<7;a++)s+=e[a]*n[a];return s}function To(e,o,n){switch(e){case"z":case"f":return null;case"y":return null;case"a":return[{constituent:g.Mm,factor:1}];case"m":return[{constituent:g.M2,factor:1}];case"o":return[{constituent:g.O1,factor:1}];case"k":return[{constituent:g.K1,factor:1}];case"j":return[{constituent:g.J1,factor:1}];case"b":return[{constituent:g.M2,factor:-1}];case"c":return[{constituent:g.M2,factor:-2}];case"g":return[{constituent:g.M2,factor:n/2}];case"p":return Q("2MN2",n,g);case"d":return Q("KQ1",n,g);case"q":return Q("NKM2",n,g);case"x":return Q(o,n,g)}}for(let e of[{name:"Zo",speed:0,xdo:[0,5,5,5,5,5,5],nodalCorrection:"z",aliases:["Z0"]},{name:"Sa",speed:.0410686,xdo:[0,5,6,5,5,5,5],nodalCorrection:"z",aliases:["SA"]},{name:"Ssa",speed:.0821373,xdo:[0,5,7,5,5,5,5],nodalCorrection:"z",aliases:["SSA"]},{name:"Sta",speed:.1232039,xdo:[0,5,8,5,5,4,4],nodalCorrection:"x",aliases:[],members:[["K2",1],["T2",-1]]},{name:"MSm",speed:.4715211,xdo:[0,6,3,6,5,5,5],nodalCorrection:"x",aliases:[],members:[["M2",1],["nu2",-1]]},{name:"Mnum",speed:.4715211,xdo:[0,6,3,6,5,5,5],nodalCorrection:"x",aliases:["M\u03BDm"],members:[["M2",1],["nu2",-1]]},{name:"Mm",speed:.5443747,xdo:[0,6,5,4,5,5,5],nodalCorrection:"y",aliases:["MM"]},{name:"MSf",speed:1.0158958,xdo:[0,7,3,5,5,5,5],nodalCorrection:"b",aliases:["MSF"]},{name:"MSo",speed:1.0158958,xdo:[0,7,3,5,5,5,5],nodalCorrection:"b",aliases:["MSO"]},{name:"SM",speed:1.0158958,xdo:[0,7,3,5,5,5,5],nodalCorrection:"x",aliases:[],members:[["S2",1],["M2",-1]]},{name:"Mf",speed:1.098033,xdo:[0,7,5,5,5,5,5],nodalCorrection:"y",aliases:["MF"]},{name:"KOo",speed:1.098033,xdo:[0,7,5,5,5,5,5],nodalCorrection:"x",aliases:[],members:[["K1",1],["O1",-1]]},{name:"MKo",speed:1.098033,xdo:[0,7,5,5,5,5,5],nodalCorrection:"x",aliases:[],members:[["K2",1],["M2",-1]]},{name:"Snu2",speed:1.4874168,xdo:[0,8,1,6,5,5,5],nodalCorrection:"x",aliases:["S\u03BD2"]},{name:"SN",speed:1.5602705,xdo:[0,8,3,4,5,5,5],nodalCorrection:"x",aliases:[],members:[["S2",1],["N2",-1]]},{name:"MStm",speed:1.5695541,xdo:[0,8,3,6,5,5,5],nodalCorrection:"x",aliases:["MSTM"],members:[["Mf",1],["M2",1],["nu2",-1]]},{name:"Mfm",speed:1.6424078,xdo:[0,8,5,4,5,5,5],nodalCorrection:"a",aliases:["MFM","MTM"]},{name:"2SM",speed:2.0317915,xdo:[0,9,1,5,5,5,5],nodalCorrection:"c",aliases:[]},{name:"MSqm",speed:2.1139287,xdo:[0,9,3,5,5,5,5],nodalCorrection:"b",aliases:["MSQM"]},{name:"Mqm",speed:2.1867829,xdo:[0,9,5,3,5,5,5],nodalCorrection:"m",aliases:["MQM"]},{name:"2SMN",speed:2.5761662,xdo:null,nodalCorrection:"x",aliases:[],members:[["S2",2],["M2",-1],["N2",-1]]},{name:"NJ1",speed:12.854286,xdo:[1,2,5,7,5,5,4],nodalCorrection:"x",aliases:[]},{name:"2Q1",speed:12.8542862,xdo:[1,2,5,7,5,5,4],nodalCorrection:"o",aliases:[]},{name:"nuJ1",speed:12.9271398,xdo:[1,2,7,5,5,5,4],nodalCorrection:"o",aliases:["\u03BDJ1"]},{name:"sigma1",speed:12.9271398,xdo:[1,2,7,5,5,5,4],nodalCorrection:"o",aliases:["\u03C31","SGM","SIGMA1"]},{name:"NK1",speed:13.39866,xdo:[1,3,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"Q1",speed:13.3986609,xdo:[1,3,5,6,5,5,4],nodalCorrection:"o",aliases:[]},{name:"rho1",speed:13.4715145,xdo:[1,3,7,4,5,5,4],nodalCorrection:"o",aliases:["\u03C11","RHO","RHO1"]},{name:"nuK1",speed:13.4715146,xdo:[1,3,7,4,5,5,4],nodalCorrection:"x",aliases:["\u03BDK1"]},{name:"O1",speed:13.9430356,xdo:[1,4,5,5,5,5,4],nodalCorrection:"y",aliases:[]},{name:"MK1",speed:13.9430356,xdo:[1,4,5,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"MS1",speed:13.9841042,xdo:[1,4,6,5,5,5,7],nodalCorrection:"x",aliases:[]},{name:"MP1",speed:14.0251729,xdo:[1,4,7,5,5,5,5],nodalCorrection:"m",aliases:[]},{name:"tau1",speed:14.0251729,xdo:[1,4,7,5,5,5,6],nodalCorrection:"k",aliases:["\u03C41","TAU1"]},{name:"M1B",speed:14.4874103,xdo:[1,5,5,4,5,5,6],nodalCorrection:"y",aliases:[]},{name:"M1C",speed:14.492052,xdo:[1,5,5,5,5,5,5],nodalCorrection:"y",aliases:[]},{name:"M1",speed:14.4966939,xdo:[1,5,5,6,5,5,6],nodalCorrection:"y",aliases:[]},{name:"NO1",speed:14.4966939,xdo:[1,5,5,6,5,5,6],nodalCorrection:"x",aliases:[]},{name:"M1A",speed:14.496694,xdo:[1,5,5,6,5,5,6],nodalCorrection:"y",aliases:[]},{name:"LP1",speed:14.5695476,xdo:[1,5,7,4,5,5,4],nodalCorrection:"x",aliases:[]},{name:"chi1",speed:14.5695476,xdo:[1,5,7,4,5,5,6],nodalCorrection:"j",aliases:["\u03C71","CHI1"]},{name:"pi1",speed:14.9178647,xdo:[1,6,2,5,5,6,4],nodalCorrection:"z",aliases:["\u03C01","PI1"]},{name:"TK1",speed:14.9178647,xdo:[1,6,2,5,5,6,4],nodalCorrection:"x",aliases:[]},{name:"SK1",speed:14.958931,xdo:[1,6,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"P1",speed:14.9589314,xdo:[1,6,3,5,5,5,4],nodalCorrection:"z",aliases:[]},{name:"S1",speed:15,xdo:[1,6,4,5,5,5,5],nodalCorrection:"z",aliases:[]},{name:"SP1",speed:15.0410686,xdo:[1,6,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"K1",speed:15.0410686,xdo:[1,6,5,5,5,5,6],nodalCorrection:"y",aliases:[]},{name:"MO1",speed:15.0410686,xdo:[1,6,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"RP1",speed:15.0821353,xdo:[1,6,6,5,5,4,4],nodalCorrection:"x",aliases:[]},{name:"psi1",speed:15.0821353,xdo:[1,6,6,5,5,4,6],nodalCorrection:"z",aliases:["\u03C81","PSI1"]},{name:"KP1",speed:15.1232059,xdo:[1,6,7,5,5,5,6],nodalCorrection:"x",aliases:[]},{name:"phi1",speed:15.123206,xdo:[1,6,7,5,5,5,6],nodalCorrection:"j",aliases:["\u03C61","PHI1"]},{name:"lambdaO1",speed:15.5125897,xdo:[1,7,3,6,5,5,4],nodalCorrection:"x",aliases:["\u03BBO1"]},{name:"theta1",speed:15.5125897,xdo:[1,7,3,6,5,5,6],nodalCorrection:"j",aliases:["\u03B81","THETA1"]},{name:"J1",speed:15.5854433,xdo:[1,7,5,4,5,5,6],nodalCorrection:"y",aliases:[]},{name:"MQ1",speed:15.5854434,xdo:[1,7,5,4,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2PO1",speed:15.9748271,xdo:[1,8,1,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"SO1",speed:16.0569644,xdo:[1,8,3,5,5,5,6],nodalCorrection:"x",aliases:[]},{name:"OO1",speed:16.1391017,xdo:[1,8,5,5,5,5,6],nodalCorrection:"d",aliases:[]},{name:"ups1",speed:16.6834764,xdo:[1,9,5,4,5,5,6],nodalCorrection:"d",aliases:["\u03C51","UPS1"]},{name:"KQ1",speed:16.6834764,xdo:[1,9,5,4,5,5,6],nodalCorrection:"x",aliases:[]},{name:"2MN2S2",speed:26.407938,xdo:[2,0,9,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3M(SK)2",speed:26.8701754,xdo:[2,1,7,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MKS2",speed:26.8701754,xdo:[2,1,7,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2NS2",speed:26.8794591,xdo:[2,1,7,7,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MS2",speed:26.9523127,xdo:[2,1,9,5,5,5,5],nodalCorrection:"x",aliases:["MLN2S2"]},{name:"3M2S2",speed:26.952313,xdo:[2,1,9,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2NK2S2",speed:26.9615964,xdo:[2,1,9,7,5,5,5],nodalCorrection:"x",aliases:[]},{name:"OQ2",speed:27.3416965,xdo:[2,2,5,6,5,5,7],nodalCorrection:"x",aliases:["OO2"]},{name:"MNK2",speed:27.3416965,xdo:[2,2,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MNS2",speed:27.4238338,xdo:[2,2,7,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"eps2",speed:27.4238338,xdo:[2,2,7,6,5,5,5],nodalCorrection:"m",aliases:["\u03B52","EP2"]},{name:"MnuS2",speed:27.4966874,xdo:[2,2,9,4,5,5,5],nodalCorrection:"x",aliases:["M\u03BDS2"]},{name:"2ML2S2",speed:27.4966874,xdo:[2,2,9,4,5,5,7],nodalCorrection:"x",aliases:[]},{name:"MNK2S2",speed:27.505971,xdo:[2,2,9,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MS2K2",speed:27.8039339,xdo:[2,3,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MK2",speed:27.8860712,xdo:[2,3,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"O2",speed:27.8860712,xdo:[2,3,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"NLK2",speed:27.8860712,xdo:[2,3,5,5,5,5,7],nodalCorrection:"x",aliases:[]},{name:"2N2",speed:27.8953548,xdo:[2,3,5,7,5,5,5],nodalCorrection:"m",aliases:[]},{name:"mu2",speed:27.9682085,xdo:[2,3,7,5,5,5,5],nodalCorrection:"m",aliases:["\u03BC2","MU2"]},{name:"2MS2",speed:27.9682085,xdo:[2,3,7,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"SNK2",speed:28.3575923,xdo:[2,4,3,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"NA2",speed:28.3986629,xdo:[2,4,4,6,5,5,5],nodalCorrection:"f",aliases:[]},{name:"N2",speed:28.4397295,xdo:[2,4,5,6,5,5,5],nodalCorrection:"m",aliases:[]},{name:"KQ2",speed:28.4397295,xdo:[2,4,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"NB2",speed:28.4807962,xdo:[2,4,6,6,5,4,5],nodalCorrection:"f",aliases:[]},{name:"NA2*",speed:28.480798,xdo:[2,4,6,6,5,5,5],nodalCorrection:"f",aliases:[]},{name:"nu2",speed:28.5125832,xdo:[2,4,7,4,5,5,5],nodalCorrection:"m",aliases:["\u03BD2","NU2"]},{name:"MKL2S2",speed:28.5947204,xdo:[2,4,9,4,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2KN2S2",speed:28.6040041,xdo:[2,4,9,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MSK2",speed:28.901967,xdo:[2,5,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"OP2",speed:28.901967,xdo:[2,5,3,5,5,5,7],nodalCorrection:"x",aliases:[]},{name:"gamma2",speed:28.9112506,xdo:[2,5,3,7,5,5,7],nodalCorrection:"y",aliases:["\u03B32","GAMMA2"]},{name:"MPS2",speed:28.9430356,xdo:[2,5,4,5,5,5,6],nodalCorrection:"x",aliases:[]},{name:"M(SK)2",speed:28.9430356,xdo:[2,5,4,5,5,6,7],nodalCorrection:"x",aliases:[]},{name:"MA2",speed:28.943036,xdo:[2,5,4,5,5,5,5],nodalCorrection:"f",aliases:[]},{name:"alpha2",speed:28.9430376,xdo:[2,5,4,5,5,6,7],nodalCorrection:"y",aliases:["\u03B12","ALPHA2"]},{name:"M2",speed:28.9841042,xdo:[2,5,5,5,5,5,5],nodalCorrection:"y",aliases:[]},{name:"KO2",speed:28.9841042,xdo:[2,5,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MSP2",speed:29.0251729,xdo:[2,5,6,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"MB2",speed:29.025173,xdo:[2,5,6,5,5,5,5],nodalCorrection:"f",aliases:[]},{name:"MA2*",speed:29.025173,xdo:[2,5,6,5,5,5,5],nodalCorrection:"f",aliases:[]},{name:"M(KS)2",speed:29.0251788,xdo:[2,5,6,5,5,4,5],nodalCorrection:"x",aliases:[]},{name:"MKS2",speed:29.0662415,xdo:[2,5,7,5,5,5,5],nodalCorrection:"x",aliases:["3N2"]},{name:"delta2",speed:29.066242,xdo:[2,5,7,5,5,5,5],nodalCorrection:"y",aliases:["\u03B42","DELTA2"]},{name:"M2(KS)2",speed:29.148378,xdo:[2,5,9,5,5,5,5],nodalCorrection:"x",aliases:["M2KS2"]},{name:"2KM2S2",speed:29.1483788,xdo:[2,5,9,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2SN(MK)2",speed:29.373488,xdo:[2,6,1,6,5,5,5],nodalCorrection:"x",aliases:["2SNMK2"]},{name:"lambda2",speed:29.4556253,xdo:[2,6,3,6,5,5,7],nodalCorrection:"m",aliases:["\u03BB2","LAM2","LAMBDA2"]},{name:"L2",speed:29.5284789,xdo:[2,6,5,4,5,5,7],nodalCorrection:"y",aliases:[]},{name:"2MN2",speed:29.528479,xdo:[2,6,5,4,5,5,7],nodalCorrection:"x",aliases:[]},{name:"L2A",speed:29.528479,xdo:[2,6,5,4,5,5,7],nodalCorrection:"p",aliases:[]},{name:"3L2",speed:29.5331208,xdo:[2,6,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"NKM2",speed:29.5377626,xdo:[2,6,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"L2B",speed:29.537763,xdo:[2,6,5,6,5,5,5],nodalCorrection:"q",aliases:[]},{name:"2SK2",speed:29.9178627,xdo:[2,7,1,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"T2",speed:29.9589333,xdo:[2,7,2,5,5,6,5],nodalCorrection:"z",aliases:[]},{name:"S2",speed:30,xdo:[2,7,3,5,5,5,5],nodalCorrection:"z",aliases:[]},{name:"KP2",speed:30,xdo:[2,7,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"R2",speed:30.0410667,xdo:[2,7,4,5,5,4,7],nodalCorrection:"z",aliases:[]},{name:"K2",speed:30.0821373,xdo:[2,7,5,5,5,5,5],nodalCorrection:"y",aliases:[]},{name:"MSnu2",speed:30.4715211,xdo:[2,8,1,6,5,5,5],nodalCorrection:"x",aliases:["MS\u03BD2"]},{name:"MSN2",speed:30.5443747,xdo:[2,8,3,4,5,5,5],nodalCorrection:"x",aliases:[]},{name:"xi2",speed:30.5536583,xdo:[2,8,3,6,5,5,5],nodalCorrection:"y",aliases:["\u03BE2","XI2"]},{name:"eta2",speed:30.626512,xdo:[2,8,5,4,5,5,5],nodalCorrection:"y",aliases:["\u03B72","ETA2"]},{name:"KJ2",speed:30.626512,xdo:[2,8,5,4,5,5,7],nodalCorrection:"x",aliases:[]},{name:"2KM(SN)2",speed:30.7086493,xdo:[2,8,7,4,5,5,5],nodalCorrection:"x",aliases:["2KMSN2"]},{name:"2SM2",speed:31.0158958,xdo:[2,9,1,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MS2N2",speed:31.0887494,xdo:[2,9,3,3,5,5,5],nodalCorrection:"x",aliases:[]},{name:"SKM2",speed:31.098033,xdo:[2,9,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2Snu2",speed:31.4874168,xdo:null,nodalCorrection:"x",aliases:["2S\u03BD2"]},{name:"3(SM)N2",speed:31.4874168,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2SN2",speed:31.5602705,xdo:null,nodalCorrection:"x",aliases:[]},{name:"SKN2",speed:31.6424078,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3S2M2",speed:32.0317915,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2SK2M2",speed:32.1139288,xdo:null,nodalCorrection:"x",aliases:[]},{name:"MQ3",speed:42.3827651,xdo:[3,3,5,6,5,5,4],nodalCorrection:"x",aliases:[]},{name:"NO3",speed:42.3827651,xdo:[3,3,5,6,5,5,4],nodalCorrection:"x",aliases:[]},{name:"MO3",speed:42.9271398,xdo:[3,4,5,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"2MK3",speed:42.9271398,xdo:[3,4,5,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"2NKM3",speed:42.9364235,xdo:[3,4,5,7,5,5,6],nodalCorrection:"x",aliases:[]},{name:"2MS3",speed:42.9682085,xdo:[3,4,6,5,5,5,7],nodalCorrection:"x",aliases:[]},{name:"2MP3",speed:43.0092771,xdo:[3,4,7,5,5,5,6],nodalCorrection:"x",aliases:[]},{name:"M3",speed:43.4761564,xdo:[3,5,5,5,5,5,7],nodalCorrection:"g",aliases:[]},{name:"NK3",speed:43.4807982,xdo:[3,5,5,6,5,5,6],nodalCorrection:"x",aliases:[]},{name:"SO3",speed:43.9430356,xdo:[3,6,3,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"MP3",speed:43.9430356,xdo:[3,6,3,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"MS3",speed:43.9841042,xdo:[3,6,4,5,5,5,7],nodalCorrection:"x",aliases:[]},{name:"MK3",speed:44.0251729,xdo:[3,6,5,5,5,5,6],nodalCorrection:"x",aliases:[]},{name:"NSO3",speed:44.4966939,xdo:[3,7,3,6,5,5,6],nodalCorrection:"x",aliases:[]},{name:"2MQ3",speed:44.5695476,xdo:[3,7,5,4,5,5,6],nodalCorrection:"x",aliases:[]},{name:"T3",speed:44.9589333,xdo:[3,8,1,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"SP3",speed:44.9589314,xdo:[3,8,1,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"S3",speed:45,xdo:[3,8,2,5,5,5,7],nodalCorrection:"x",aliases:[]},{name:"SK3",speed:45.0410686,xdo:[3,8,3,5,5,5,6],nodalCorrection:"x",aliases:["R3"]},{name:"K3",speed:45.1232059,xdo:[3,8,5,5,5,5,6],nodalCorrection:"x",aliases:[]},{name:"2SO3",speed:46.0569644,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4MS4",speed:55.936417,xdo:[4,1,9,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"4M2S4",speed:55.936417,xdo:[4,1,9,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MNK4",speed:56.3258007,xdo:[4,2,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3NM4",speed:56.3350844,xdo:[4,2,5,8,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MNS4",speed:56.407938,xdo:[4,2,7,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MnuS4",speed:56.4807917,xdo:[4,2,9,4,5,5,5],nodalCorrection:"x",aliases:["2M\u03BDS4"]},{name:"3MK4",speed:56.8701754,xdo:[4,3,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MNLK4",speed:56.8701754,xdo:[4,3,5,5,5,5,7],nodalCorrection:"x",aliases:[]},{name:"2N4",speed:56.879459,xdo:[4,3,5,7,5,5,5],nodalCorrection:"x",aliases:[]},{name:"N4",speed:56.8794591,xdo:[4,3,5,7,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MS4",speed:56.9523127,xdo:[4,3,7,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2NKS4",speed:56.9615964,xdo:[4,3,7,7,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MSNK4",speed:57.3416965,xdo:[4,4,3,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MN4",speed:57.4238338,xdo:[4,4,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"Mnu4",speed:57.4966874,xdo:[4,4,7,4,5,5,5],nodalCorrection:"x",aliases:["M\u03BD4"]},{name:"2MLS4",speed:57.4966874,xdo:[4,4,7,4,5,5,7],nodalCorrection:"x",aliases:[]},{name:"MNKS4",speed:57.5059711,xdo:[4,4,7,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MSK4",speed:57.8860712,xdo:[4,5,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MA4",speed:57.92714,xdo:[4,5,4,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"M4",speed:57.9682085,xdo:[4,5,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MRS4",speed:58.0092752,xdo:[4,5,6,5,5,4,7],nodalCorrection:"x",aliases:[]},{name:"2MKS4",speed:58.0503458,xdo:[4,5,7,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"SN4",speed:58.4397295,xdo:[4,6,3,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MN4",speed:58.5125832,xdo:[4,6,5,4,5,5,5],nodalCorrection:"x",aliases:[]},{name:"ML4",speed:58.5125832,xdo:[4,6,5,4,5,5,5],nodalCorrection:"x",aliases:[]},{name:"KN4",speed:58.5218668,xdo:[4,6,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"NK4",speed:58.521867,xdo:[4,6,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2SMK4",speed:58.901967,xdo:[4,7,1,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"M2SK4",speed:58.901967,xdo:[4,7,1,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MT4",speed:58.9430376,xdo:[4,7,2,5,5,6,5],nodalCorrection:"x",aliases:[]},{name:"MS4",speed:58.9841042,xdo:[4,7,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MR4",speed:59.0251709,xdo:[4,7,4,5,5,4,7],nodalCorrection:"x",aliases:[]},{name:"MK4",speed:59.0662415,xdo:[4,7,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2SNM4",speed:59.4556253,xdo:[4,8,1,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"SL4",speed:59.528479,xdo:[4,8,3,4,5,5,7],nodalCorrection:"x",aliases:[]},{name:"2MSN4",speed:59.5284794,xdo:[4,8,3,4,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MKN4",speed:59.6106162,xdo:[4,8,5,4,5,5,5],nodalCorrection:"x",aliases:[]},{name:"ST4",speed:59.9589333,xdo:[4,9,0,5,5,6,5],nodalCorrection:"x",aliases:[]},{name:"S4",speed:60,xdo:[4,9,1,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"SK4",speed:60.0821373,xdo:[4,9,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"K4",speed:60.1642746,xdo:[4,9,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3SM4",speed:61.0158958,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2SKM4",speed:61.098033,xdo:null,nodalCorrection:"x",aliases:[]},{name:"MNO5",speed:71.3668694,xdo:[5,3,5,6,5,5,4],nodalCorrection:"x",aliases:[]},{name:"2NKMS5",speed:71.453648,xdo:[5,3,7,7,5,5,6],nodalCorrection:"x",aliases:[]},{name:"2MO5",speed:71.911244,xdo:[5,4,5,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"3MK5",speed:71.9112441,xdo:[5,4,5,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"2NK5",speed:71.9205277,xdo:[5,4,5,7,5,5,6],nodalCorrection:"x",aliases:[]},{name:"3MS5",speed:71.9523127,xdo:[5,4,6,5,5,5,7],nodalCorrection:"x",aliases:[]},{name:"3MP5",speed:71.9933814,xdo:[5,4,7,5,5,5,6],nodalCorrection:"x",aliases:[]},{name:"NSO5",speed:72.3827651,xdo:[5,5,3,6,5,5,4],nodalCorrection:"x",aliases:[]},{name:"M5",speed:72.460261,xdo:[5,5,5,5,5,5,6],nodalCorrection:"g",aliases:[]},{name:"MNK5",speed:72.4649024,xdo:[5,5,5,6,5,5,6],nodalCorrection:"x",aliases:[]},{name:"MB5",speed:72.501329,xdo:[5,5,6,5,5,5,6],nodalCorrection:"x",aliases:[]},{name:"MSO5",speed:72.9271398,xdo:[5,6,3,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"2MP5",speed:72.92714,xdo:[5,6,3,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"2MS5",speed:72.9682085,xdo:[5,6,4,5,5,5,7],nodalCorrection:"x",aliases:[]},{name:"3MO5",speed:73.009277,xdo:[5,6,5,5,5,5,6],nodalCorrection:"x",aliases:[]},{name:"2MK5",speed:73.009277,xdo:[5,6,5,5,5,5,6],nodalCorrection:"x",aliases:[]},{name:"NSK5",speed:73.471515,xdo:[5,7,3,4,5,5,6],nodalCorrection:"x",aliases:[]},{name:"3MQ5",speed:73.5536518,xdo:[5,7,5,4,5,5,6],nodalCorrection:"x",aliases:[]},{name:"MSP5",speed:73.9430356,xdo:[5,8,1,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"MSK5",speed:74.0251729,xdo:[5,8,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3KM5",speed:74.1073102,xdo:[5,8,5,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"2SP5",speed:74.9589314,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2SK5",speed:75.0410686,xdo:null,nodalCorrection:"x",aliases:[]},{name:"(SK)K5",speed:75.1232059,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2(MN)K6",speed:84.7655303,xdo:[6,1,5,7,5,5,5],nodalCorrection:"x",aliases:[]},{name:"5MKS6",speed:84.8383839,xdo:[6,1,7,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2(MN)S6",speed:84.8476676,xdo:[6,1,7,7,5,5,5],nodalCorrection:"x",aliases:[]},{name:"5M2S6",speed:84.9205212,xdo:[6,1,9,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MNK6",speed:85.309905,xdo:[6,2,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"N6",speed:85.3191886,xdo:[6,2,5,8,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MNS6",speed:85.3920423,xdo:[6,2,7,6,5,5,5],nodalCorrection:"x",aliases:["2NMLS6"]},{name:"3NKS6",speed:85.4013259,xdo:[6,2,7,8,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MnuS6",speed:85.4648959,xdo:[6,2,9,4,5,5,5],nodalCorrection:"x",aliases:["3M\u03BDS6"]},{name:"4MK6",speed:85.8542797,xdo:[6,3,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"M2N6",speed:85.863563,xdo:[6,3,5,7,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2NM6",speed:85.8635633,xdo:[6,3,5,7,5,5,5],nodalCorrection:"x",aliases:[]},{name:"4MS6",speed:85.936417,xdo:[6,3,7,5,5,5,5],nodalCorrection:"x",aliases:["2MLNS6"]},{name:"2NMKS6",speed:85.9457006,xdo:[6,3,7,7,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MSNK6",speed:86.3258007,xdo:[6,4,3,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MN6",speed:86.407938,xdo:[6,4,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2Mnu6",speed:86.4807917,xdo:[6,4,7,4,5,5,5],nodalCorrection:"x",aliases:["2M\u03BD6","3MLS6"]},{name:"2MNO6",speed:86.480792,xdo:[6,4,7,4,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MNKS6",speed:86.4900753,xdo:[6,4,7,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MSK6",speed:86.8701754,xdo:[6,5,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MA6",speed:86.911244,xdo:[6,5,4,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"M6",speed:86.9523127,xdo:[6,5,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MKS6",speed:87.03445,xdo:[6,5,7,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MTN6",speed:87.3827671,xdo:[6,6,2,6,5,6,5],nodalCorrection:"x",aliases:[]},{name:"MSN6",speed:87.4238338,xdo:[6,6,3,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2ML6",speed:87.496687,xdo:[6,6,5,4,5,5,7],nodalCorrection:"x",aliases:[]},{name:"4MN6",speed:87.4966874,xdo:[6,6,5,4,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MKN6",speed:87.505971,xdo:[6,6,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MNK6",speed:87.5059711,xdo:[6,6,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MKnu6",speed:87.5788247,xdo:[6,6,7,4,5,5,5],nodalCorrection:"x",aliases:["MK\u03BD6"]},{name:"2(MS)K6",speed:87.8860712,xdo:[6,7,1,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MT6",speed:87.9271418,xdo:[6,7,2,5,5,6,5],nodalCorrection:"x",aliases:[]},{name:"2MS6",speed:87.9682085,xdo:[6,7,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MK6",speed:88.0503458,xdo:[6,7,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2SN6",speed:88.4397295,xdo:[6,8,1,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MTN6",speed:88.4715165,xdo:[6,8,2,4,5,6,5],nodalCorrection:"x",aliases:[]},{name:"MSL6",speed:88.512583,xdo:[6,8,3,4,5,5,7],nodalCorrection:"x",aliases:[]},{name:"3MSN6",speed:88.5125832,xdo:[6,8,3,4,5,5,5],nodalCorrection:"x",aliases:[]},{name:"NSK6",speed:88.5218668,xdo:[6,8,3,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"SNK6",speed:88.521867,xdo:[6,8,3,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MKN6",speed:88.59472,xdo:[6,8,5,4,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MKL6",speed:88.5947205,xdo:[6,8,5,4,5,5,7],nodalCorrection:"x",aliases:[]},{name:"MST6",speed:88.9430376,xdo:[6,9,0,5,5,6,5],nodalCorrection:"x",aliases:[]},{name:"2SM6",speed:88.9841042,xdo:[6,9,1,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MSK6",speed:89.0662415,xdo:[6,9,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"SKM6",speed:89.066242,xdo:[6,9,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2KM6",speed:89.1483788,xdo:[6,9,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MSTN6",speed:89.4874123,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2(MS)N6",speed:89.528479,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2MSKN6",speed:89.6106162,xdo:null,nodalCorrection:"x",aliases:[]},{name:"S6",speed:90,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2MNO7",speed:100.3509736,xdo:[7,3,5,6,5,5,4],nodalCorrection:"x",aliases:[]},{name:"3MQ7",speed:100.3509736,xdo:[7,3,5,6,5,5,4],nodalCorrection:"x",aliases:[]},{name:"4MK7",speed:100.8953483,xdo:[7,4,5,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"2NMK7",speed:100.904632,xdo:[7,4,5,7,5,5,6],nodalCorrection:"x",aliases:[]},{name:"MNSO7",speed:101.3668694,xdo:[7,5,3,6,5,5,4],nodalCorrection:"x",aliases:[]},{name:"M7",speed:101.4443667,xdo:[7,5,5,5,5,5,7],nodalCorrection:"g",aliases:[]},{name:"2MNK7",speed:101.4490067,xdo:[7,5,5,6,5,5,6],nodalCorrection:"x",aliases:[]},{name:"MNKO7",speed:101.4490067,xdo:[7,5,5,6,5,5,6],nodalCorrection:"x",aliases:[]},{name:"2MSO7",speed:101.9112441,xdo:[7,6,3,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"3MK7",speed:101.9933814,xdo:[7,6,5,5,5,5,6],nodalCorrection:"x",aliases:[]},{name:"MSKO7",speed:103.0092771,xdo:[7,8,3,5,5,5,4],nodalCorrection:"x",aliases:[]},{name:"3M2NS8",speed:113.8317718,xdo:[8,1,7,7,5,5,5],nodalCorrection:"x",aliases:[]},{name:"4MNS8",speed:114.3761465,xdo:[8,2,7,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"5MK8",speed:114.8383839,xdo:[8,3,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2(MN)8",speed:114.8476676,xdo:[8,3,5,7,5,5,5],nodalCorrection:"x",aliases:["2MN8"]},{name:"5MS8",speed:114.9205212,xdo:[8,3,7,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2(MN)KS8",speed:114.9298048,xdo:[8,3,7,7,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MSNK8",speed:115.309905,xdo:[8,4,3,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MN8",speed:115.3920423,xdo:[8,4,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3Mnu8",speed:115.4648959,xdo:[8,4,7,4,5,5,5],nodalCorrection:"x",aliases:["3M\u03BD8","4MLS8"]},{name:"3MNKS8",speed:115.4741795,xdo:[8,4,7,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"4MSK8",speed:115.8542797,xdo:[8,5,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"MA8",speed:115.895348,xdo:[8,5,4,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"M8",speed:115.936417,xdo:[8,5,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"4MKS8",speed:116.0185542,xdo:[8,5,7,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MSN8",speed:116.407938,xdo:[8,6,3,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3ML8",speed:116.4807917,xdo:[8,6,5,4,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MNK8",speed:116.4900753,xdo:[8,6,5,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3M2SK8",speed:116.8701754,xdo:[8,7,1,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2(NS)8",speed:116.8794591,xdo:[8,7,1,7,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MT8",speed:116.911246,xdo:[8,7,2,5,5,6,5],nodalCorrection:"x",aliases:[]},{name:"3MS8",speed:116.9523127,xdo:[8,7,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MK8",speed:117.03445,xdo:[8,7,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2SNM8",speed:117.4238338,xdo:[8,8,1,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2SMN8",speed:117.423834,xdo:[8,8,1,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MSL8",speed:117.4966874,xdo:[8,8,3,4,5,5,7],nodalCorrection:"x",aliases:[]},{name:"MSNK8",speed:117.5059711,xdo:[8,8,3,6,5,5,5],nodalCorrection:"x",aliases:[]},{name:"4MSN8",speed:117.578825,xdo:[8,8,5,4,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2MST8",speed:117.9271418,xdo:[8,9,0,5,5,6,5],nodalCorrection:"x",aliases:[]},{name:"2(MS)8",speed:117.9682085,xdo:[8,9,1,5,5,5,5],nodalCorrection:"x",aliases:["2MS8"]},{name:"2MSK8",speed:118.0503458,xdo:[8,9,3,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"2(MK)8",speed:118.132483,xdo:[8,9,5,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3SN8",speed:118.4397295,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2SML8",speed:118.5125832,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2SKN8",speed:118.5218668,xdo:null,nodalCorrection:"x",aliases:[]},{name:"MSKL8",speed:118.5947205,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3SM8",speed:118.9841042,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2SMK8",speed:119.0662415,xdo:null,nodalCorrection:"x",aliases:[]},{name:"S8",speed:120,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3MNO9",speed:129.3350779,xdo:[9,3,5,6,5,5,4],nodalCorrection:"x",aliases:[]},{name:"2M2NK9",speed:129.8887362,xdo:[9,4,5,7,5,5,6],nodalCorrection:"x",aliases:[]},{name:"2(MN)K9",speed:129.888738,xdo:[9,4,5,7,5,5,6],nodalCorrection:"x",aliases:[]},{name:"MA9",speed:130.3874,xdo:[9,5,4,5,5,5,5],nodalCorrection:"x",aliases:[]},{name:"3MNK9",speed:130.4331109,xdo:[9,5,5,6,5,5,6],nodalCorrection:"x",aliases:[]},{name:"4MK9",speed:130.9774856,xdo:[9,6,5,5,5,5,6],nodalCorrection:"x",aliases:[]},{name:"3MSK9",speed:131.9933814,xdo:[9,8,3,5,5,5,6],nodalCorrection:"x",aliases:[]},{name:"5MNS10",speed:143.3602507,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3M2N10",speed:143.8317718,xdo:null,nodalCorrection:"x",aliases:[]},{name:"6MS10",speed:143.9046254,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3M2NKS10",speed:143.9139091,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4MSNK10",speed:144.2940092,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4MN10",speed:144.3761465,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4Mnu10",speed:144.4490002,xdo:null,nodalCorrection:"x",aliases:["4M\u03BD10"]},{name:"5MSK10",speed:144.8383839,xdo:null,nodalCorrection:"x",aliases:[]},{name:"M10",speed:144.9205212,xdo:null,nodalCorrection:"x",aliases:[]},{name:"5MKS10",speed:145.0026585,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3MSN10",speed:145.3920423,xdo:null,nodalCorrection:"x",aliases:["3MNS10"]},{name:"6MN10",speed:145.4648959,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4ML10",speed:145.4648959,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3MNK10",speed:145.4741795,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2(SN)M10",speed:145.8635633,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4MS10",speed:145.936417,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4MK10",speed:146.0185542,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2(MS)N10",speed:146.407938,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3MSL10",speed:146.4807915,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2MNSK10",speed:146.4900753,xdo:null,nodalCorrection:"x",aliases:[]},{name:"5MSN10",speed:146.5629217,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3M2S10",speed:146.9523127,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3MSK10",speed:147.03445,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3SMN10",speed:147.4238338,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2SMKN10",speed:147.5059711,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4M2SN10",speed:147.578825,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3S2M10",speed:147.9682085,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2(MS)K10",speed:148.0503458,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4MSK11",speed:160.9774856,xdo:null,nodalCorrection:"x",aliases:[]},{name:"5M2NS12",speed:171.7999803,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3(MN)12",speed:172.2715013,xdo:null,nodalCorrection:"x",aliases:[]},{name:"6MNS12",speed:172.344355,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4M2N12",speed:172.815876,xdo:null,nodalCorrection:"x",aliases:[]},{name:"7MS12",speed:172.8887297,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4M2NKS12",speed:172.8980133,xdo:null,nodalCorrection:"x",aliases:[]},{name:"5MSNK12",speed:173.2781135,xdo:null,nodalCorrection:"x",aliases:[]},{name:"5MN12",speed:173.3602507,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3N2MS12",speed:173.362457,xdo:null,nodalCorrection:"x",aliases:[]},{name:"5Mnu12",speed:173.4331044,xdo:null,nodalCorrection:"x",aliases:["5M\u03BD12"]},{name:"6MSK12",speed:173.8224882,xdo:null,nodalCorrection:"x",aliases:[]},{name:"MA12",speed:173.863557,xdo:null,nodalCorrection:"x",aliases:[]},{name:"M12",speed:173.9046254,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4MSN12",speed:174.3761465,xdo:null,nodalCorrection:"x",aliases:["4MNS12"]},{name:"4ML12",speed:174.449,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4MNK12",speed:174.4582839,xdo:null,nodalCorrection:"x",aliases:[]},{name:"2(MSN)12",speed:174.8476676,xdo:null,nodalCorrection:"x",aliases:[]},{name:"5MT12",speed:174.8794545,xdo:null,nodalCorrection:"x",aliases:[]},{name:"5MS12",speed:174.9205212,xdo:null,nodalCorrection:"x",aliases:[]},{name:"5MK12",speed:175.0026585,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3M2SN12",speed:175.3920423,xdo:null,nodalCorrection:"x",aliases:[]},{name:"6MSN12",speed:175.4648959,xdo:null,nodalCorrection:"x",aliases:["4MSL12"]},{name:"3MNKS12",speed:175.4741785,xdo:null,nodalCorrection:"x",aliases:[]},{name:"5MSN12",speed:175.547033,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4MST12",speed:175.8953503,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4M2S12",speed:175.936417,xdo:null,nodalCorrection:"x",aliases:[]},{name:"4MSK12",speed:176.0185542,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3(MS)12",speed:176.9523127,xdo:null,nodalCorrection:"x",aliases:[]},{name:"3M2SK12",speed:177.03445,xdo:null,nodalCorrection:"x",aliases:[]},{name:"5MSN14",speed:203.3602507,xdo:null,nodalCorrection:"x",aliases:[]},{name:"5MNK14",speed:203.442388,xdo:null,nodalCorrection:"x",aliases:[]},{name:"6MS14",speed:203.9046254,xdo:null,nodalCorrection:"x",aliases:[]}])go(e);var ee=g,me=e=>{if(e instanceof Date)return e;if(typeof e=="number")return new Date(e*1e3);throw new Error("Invalid date format, should be a Date object, or timestamp")},Oo=(e,o,n=600)=>{let s=[],a=Math.ceil(o.getTime()/1e3/n)*n,l=Math.floor(e.getTime()/1e3/n)*n,r=l,t=[];for(;r<=a;)s.push(new Date(r*1e3)),t.push((r-l)/3600),r+=n;return{items:s,hours:t}},j=({harmonicConstituents:e,constituentModels:o=ee,offset:n,fundamentals:s=H,prominenceThreshold:a})=>{if(!Array.isArray(e))throw new Error("Harmonic constituents are not an array");let l=[];e.forEach(c=>{if(typeof c.name>"u")throw new Error("Harmonic constituents must have a name property");o[c.name]!==void 0&&l.push({...c,phase:i*c.phase})}),n!==!1&&l.push({name:"Z0",phase:0,amplitude:n});let r=new Date,t=new Date,d={};return d.setTimeSpan=(c,M)=>{if(r=me(c),t=me(M),r.getTime()>=t.getTime())throw new Error("Start time must be before end time");return d},d.prediction=c=>{let M=typeof c<"u"?c:{timeFidelity:600},C=Oo(r,t,M.timeFidelity);return ho({timeline:C,constituents:l,constituentModels:o,start:C.items[0]??r,fundamentals:s,prominenceThreshold:M.prominenceThreshold??a})},Object.freeze(d)},Po=3.2808399,W="meters";function Ao(e,o){let{datums:n,harmonic_constituents:s}=e,a=e.chart_datum&&e.chart_datum in n?e.chart_datum:void 0;function l({datum:r=a,nodeCorrections:t}={}){let d=0;if(r){let c=n?.[r],M=n?.MSL;if(typeof c!="number")throw new Error(`Station ${e.id} missing ${r} datum. Available datums: ${Object.keys(n).join(", ")}`);if(typeof M!="number")throw new Error(`Station ${e.id} missing MSL datum, so predictions can't be given in ${r}.`);d=M-c}return oe(s,{offset:d,nodeCorrections:t})}return{...e,distance:o,defaultDatum:a,getExtremesPrediction({datum:r=a,units:t=W,nodeCorrections:d,...c}){return{datum:r,units:t,station:e,distance:o,extremes:l({datum:r,nodeCorrections:d}).getExtremesPrediction({...c,offsets:e.offsets}).map(M=>q(M,t))}},getTimelinePrediction({datum:r=a,units:t=W,nodeCorrections:d,...c}){return{datum:r,units:t,station:e,distance:o,timeline:l({datum:r,nodeCorrections:d}).getTimelinePrediction({...c,offsets:e.offsets}).map(M=>q(M,t))}},getWaterLevelAtTime({time:r,datum:t=a,units:d=W,nodeCorrections:c}){return{datum:t,units:d,station:e,distance:o,...q(l({datum:t,nodeCorrections:c}).getWaterLevelAtTime({time:r,offsets:e.offsets}),d)}}}}function q(e,o){let{level:n}=e;if(o==="feet")n*=Po;else if(o!=="meters")throw new Error(`Unsupported units: ${o}`);return{...e,level:n}}function oe(e,o={}){let{nodeCorrections:n,...s}=o,a={harmonicConstituents:e,fundamentals:xo(n),offset:!1,...s};return{getTimelinePrediction:({start:l,end:r,timeFidelity:t,offsets:d})=>j(a).setTimeSpan(l,r).prediction({timeFidelity:t}).getTimelinePrediction({offsets:d}),getExtremesPrediction:({start:l,end:r,labels:t,offsets:d})=>j(a).setTimeSpan(l,r).prediction().getExtremesPrediction({labels:t,offsets:d}),getWaterLevelAtTime:({time:l,offsets:r})=>{let t=new Date(l.getTime()+6e5);return j(a).setTimeSpan(l,t).prediction().getTimelinePrediction({offsets:r})[0]}}}oe.constituents=ee;return Te(Lo);})();
+
+</script>
+<script>
+window.TIDE_CONFIG = {"available": ["0_0", "0_1", "0_2", "0_3", "0_4", "0_5", "0_6", "0_7", "0_8", "0_9", "0_10", "0_11", "1_0", "1_1", "1_2", "1_3", "1_4", "1_5", "1_6", "1_7", "1_8", "1_9", "1_10", "1_11", "2_0", "2_1", "2_2", "2_3", "2_4", "2_5", "2_6", "2_7", "2_8", "2_9", "2_10", "2_11", "3_0", "3_1", "3_2", "3_3", "3_4", "3_5", "3_6", "3_7", "3_8", "3_9", "3_10", "3_11", "4_0", "4_1", "4_3", "4_4", "4_5", "4_6", "4_7", "4_8", "4_9", "4_10", "4_11", "5_0", "5_1", "5_2", "5_3", "5_4", "5_5", "5_6", "5_7", "5_8", "5_9", "5_10", "5_11"]};
+/* Tide prediction engine — harmonic synthesis with FES-style (Schureman) nodal
+   corrections and minor-constituent inference, ported from pyTMD (MIT) so that
+   results reproduce pyTMD's EOT20 predictions. Heights in the units of the input
+   constants (cm for EOT20). */
+const TideEngine = (() => {
+  const D2R = Math.PI / 180;
+  // Doodson/Cartwright multipliers for [tau, s, h, p, N, ps, 90deg]
+  const MAJOR = {
+    m2: [2, 0, 0, 0, 0, 0, 0], s2: [2, 2, -2, 0, 0, 0, 0], n2: [2, -1, 0, 1, 0, 0, 0],
+    k2: [2, 2, 0, 0, 0, 0, 0], k1: [1, 1, 0, 0, 0, 0, 1], o1: [1, -1, 0, 0, 0, 0, -1],
+    p1: [1, 1, -2, 0, 0, 0, -1], q1: [1, -2, 0, 1, 0, 0, -1], '2n2': [2, -2, 0, 2, 0, 0, 0],
+    j1: [1, 2, 0, -1, 0, 0, 1], t2: [2, 2, -3, 0, 0, 1, 0], m4: [4, 0, 0, 0, 0, 0, 0],
+    s1: [1, 1, -1, 0, 0, 0, 2], mf: [0, 2, 0, 0, 0, 0, 0], mm: [0, 1, 0, -1, 0, 0, 0],
+    sa: [0, 0, 1, 0, 0, -1, 0], ssa: [0, 0, 2, 0, 0, 0, 0]
+  };
+  // minor constituents inferred from majors (pyTMD FES rules)
+  const MINOR = {
+    '2q1': [1, -3, 0, 2, 0, 0, -1], sigma1: [1, -3, 2, 0, 0, 0, -1], rho1: [1, -2, 2, -1, 0, 0, -1],
+    m1b: [1, 0, 0, -1, 0, 0, 1], m1: [1, 0, 0, 1, 0, 0, 1], chi1: [1, 0, 2, -1, 0, 0, 1],
+    pi1: [1, 1, -3, 0, 0, 1, -1], phi1: [1, 1, 2, 0, 0, 0, 1], theta1: [1, 2, -2, 1, 0, 0, 1],
+    oo1: [1, 3, 0, 0, 0, 0, 1], mu2: [2, -2, 2, 0, 0, 0, 0], nu2: [2, -1, 2, -1, 0, 0, 0],
+    lambda2: [2, 1, -2, 1, 0, 0, 2], l2: [2, 1, 0, -1, 0, 0, 2], l2b: [2, 1, 0, 1, 0, 0, 0],
+    eps2: [2, -3, 2, 1, 0, 0, 0], eta2: [2, 3, 0, -1, 0, 0, 0]
+  };
+  // nodal-correction type per constituent
+  const NODAL = {
+    m2: 'M2', n2: 'M2', '2n2': 'M2', mu2: 'M2', nu2: 'M2', lambda2: 'M2', eps2: 'M2',
+    m4: 'M4', o1: 'O1', q1: 'O1', '2q1': 'O1', sigma1: 'O1', rho1: 'O1', m1b: 'O1',
+    k1: 'K1', k2: 'K2', j1: 'J1', m1: 'J1', chi1: 'J1', oo1: 'OO1', mf: 'MF', mm: 'MM',
+    l2: 'L2', l2b: 'L2B', eta2: 'ETA2'
+  };
+  const RATES = [14.4920521, 0.5490165, 0.0410686, 0.0046418, -0.0022064, 0.0000020, 0]; // deg/h
+  const speed = c => c.reduce((a, k, i) => a + k * RATES[i], 0);
+
+  function poly(c, T) { let r = 0, x = 1; for (const ci of c) { r += ci * x; x *= T; } return r; }
+  const LL = [218.3164477, 481267.88123421, -1.5786e-3, 1.855835e-6, -1.53388e-8];
+  const LE = [297.8501921, 445267.1114034, -1.8819e-3, 1.83195e-6, -8.8445e-9];
+  const LH = LL.map((v, i) => v - LE[i]);
+  const LP = [83.3532465, 4069.0137287, -1.032e-2, -1.249172e-5];
+  const LN = [125.04452, -1934.136261, 2.0708e-3, 2.22222e-6];
+
+  // TT - UT1 (days), smooth approximation, only affects arguments at the 1e-4 degree level
+  function deltaT(mjd) { const y = 2000 + (mjd - 51544.5) / 365.25; return Math.min(80, Math.max(55, 69.2 + 0.15 * (y - 2026))) / 86400; }
+
+  // astronomical state at UTC time (ms since epoch)
+  function astro(ms) {
+    const mjd = ms / 86400000 + 40587;
+    const T = (mjd + deltaT(mjd) - 51544.5) / 36525;
+    const s = poly(LL, T), h = poly(LH, T), p = poly(LP, T), N = poly(LN, T), ps = 282.94 + 1.7192 * T;
+    const hour = 24 * (mjd - Math.floor(mjd));
+    const tau = 15 * hour - s + h;
+    const Nr = N * D2R, Pr = p * D2R;
+    const I = Math.acos(0.913694997 - 0.035692561 * Math.cos(Nr));
+    const at1 = Math.atan(1.01883 * Math.tan(Nr / 2)), at2 = Math.atan(0.64412 * Math.tan(Nr / 2));
+    let xi = -at1 - at2 + Nr; xi = Math.atan2(Math.sin(xi), Math.cos(xi));
+    const nu = at1 - at2;
+    const pp = Pr - xi;
+    const t2 = Math.tan(I / 2) ** 2;
+    const Ru = Math.atan(Math.sin(2 * pp) / (1 / (6 * t2) - Math.cos(2 * pp)));
+    const Ra = 1 / Math.sqrt(1 - 12 * t2 * Math.cos(2 * pp) + 36 * t2 * t2);
+    const s2I = Math.sin(2 * I), sI = Math.sin(I);
+    const nup = Math.atan(s2I * Math.sin(nu) / (s2I * Math.cos(nu) + 0.3347));
+    const nus = 0.5 * Math.atan(sI * sI * Math.sin(2 * nu) / (sI * sI * Math.cos(2 * nu) + 0.0727));
+    const fM2 = Math.cos(I / 2) ** 4 / 0.9154, uM2 = 2 * xi - 2 * nu;
+    const Ncos = Math.cos(Nr), Nsin = Math.sin(Nr);
+    const fu = {
+      M2: [fM2, uM2], M4: [fM2 * fM2, 2 * uM2],
+      O1: [sI * Math.cos(I / 2) ** 2 / 0.38, 2 * xi - nu],
+      K1: [Math.sqrt(0.8965 * s2I * s2I + 0.6001 * s2I * Math.cos(nu) + 0.1006), -nup],
+      K2: [Math.sqrt(19.0444 * sI ** 4 + 2.7702 * sI * sI * Math.cos(2 * nu) + 0.0981), -2 * nus],
+      J1: [s2I / 0.7214, -nu],
+      OO1: [sI * Math.sin(I / 2) ** 2 / 0.01640, -2 * xi - nu],
+      MF: [sI * sI / 0.1578, -2 * xi], MM: [(2 / 3 - sI * sI) / 0.5021, 0],
+      L2: [fM2 / Ra, uM2 - Ru],
+      L2B: [Math.hypot(1 + 0.441 * Ncos, 0.441 * Nsin), Math.atan2(-0.441 * Nsin, 1 + 0.441 * Ncos)],
+      ETA2: [sI * sI / 0.1565, -2 * nu], ONE: [1, 0]
+    };
+    return { args: [tau, s, h, p, N, ps, 90], fu, ps };
+  }
+
+  const cadd = (terms) => { let re = 0, im = 0; for (const [k, z] of terms) { re += k * z[0]; im += k * z[1]; } return [re, im]; };
+  function inferMinor(h) {
+    const { q1, o1, k1, n2, m2, s2, k2 } = h, n22 = h['2n2'];
+    return {
+      '2q1': cadd([[0.263, q1], [-0.0252, o1]]), sigma1: cadd([[0.297, q1], [-0.0264, o1]]),
+      rho1: cadd([[0.164, q1], [0.0048, o1]]), m1b: cadd([[0.0140, o1], [0.0101, k1]]),
+      m1: cadd([[0.0389, o1], [0.0282, k1]]), chi1: cadd([[0.0064, o1], [0.0060, k1]]),
+      pi1: cadd([[0.0030, o1], [0.0171, k1]]), phi1: cadd([[-0.0015, o1], [0.0152, k1]]),
+      theta1: cadd([[-0.0065, o1], [0.0155, k1]]), oo1: cadd([[-0.0431, o1], [0.0613, k1]]),
+      mu2: cadd([[0.069439968323, k2], [0.351535557706, n2], [-0.046278307672, m2]]),
+      nu2: cadd([[-0.006104695053, k2], [0.156878802427, n2], [0.006755704028, m2]]),
+      lambda2: cadd([[0.016503557465, k2], [-0.013307812292, n2], [0.007753383202, m2]]),
+      l2: cadd([[0.0131, m2], [0.0326, s2]]),
+      l2b: cadd([[0.077137765667, k2], [-0.051653455134, n2], [0.027869916824, m2]]),
+      eps2: cadd([[0.53285, n22], [-0.03304, n2]]), eta2: cadd([[-0.0034925, m2], [0.0831707, k2]])
+    };
+  }
+
+  // hc: {m2:[re,im],...} complex amplitudes (re = A cos g, im = -A sin g)
+  function prepare(hc, opts = {}) {
+    const list = [];
+    const exclude = opts.exclude || {};
+    for (const [name, coef] of Object.entries(MAJOR)) if (hc[name] && !exclude[name]) list.push({ name, coef, type: NODAL[name] || 'ONE', z: hc[name] });
+    if (opts.infer !== false) for (const [name, z] of Object.entries(inferMinor(hc))) list.push({ name, coef: MINOR[name], type: NODAL[name] || 'ONE', z, minor: true });
+    const n = list.length;
+    const C = new Float64Array(n * 7), RE = new Float64Array(n), IM = new Float64Array(n), T = list.map(x => x.type);
+    list.forEach((x, i) => { for (let k = 0; k < 7; k++) C[i * 7 + k] = x.coef[k]; RE[i] = x.z[0]; IM[i] = x.z[1]; });
+    return { list, n, C, RE, IM, T };
+  }
+
+  function heightAt(P, A) {
+    const a = A.args; let sum = 0;
+    for (let i = 0; i < P.n; i++) {
+      const o = i * 7;
+      const G = P.C[o] * a[0] + P.C[o + 1] * a[1] + P.C[o + 2] * a[2] + P.C[o + 3] * a[3] + P.C[o + 4] * a[4] + P.C[o + 5] * a[5] + P.C[o + 6] * 90;
+      const fu = A.fu[P.T[i]];
+      const th = G * D2R + fu[1];
+      sum += fu[0] * (P.RE[i] * Math.cos(th) - P.IM[i] * Math.sin(th));
+    }
+    return sum;
+  }
+  function predict(P, times) { const out = new Float64Array(times.length); for (let i = 0; i < times.length; i++) out[i] = heightAt(P, astro(times[i])); return out; }
+
+  // high/low waters between t0 and t1 (ms). Sampling step 6 min, parabolic refinement.
+  function extremes(P, t0, t1, opts = {}) {
+    const step = (opts.stepMin || 6) * 60000;
+    const pad = 3 * 3600000;
+    const times = []; for (let t = t0 - pad; t <= t1 + pad; t += step) times.push(t);
+    const h = predict(P, times);
+    let ex = [];
+    for (let i = 1; i < h.length - 1; i++) {
+      const isMax = h[i] > h[i - 1] && h[i] >= h[i + 1], isMin = h[i] < h[i - 1] && h[i] <= h[i + 1];
+      if (!isMax && !isMin) continue;
+      const d = h[i - 1] - 2 * h[i] + h[i + 1];
+      const off = d !== 0 ? 0.5 * (h[i - 1] - h[i + 1]) / d : 0;
+      const t = times[i] + off * step;
+      ex.push({ t, h: heightAt(P, astro(t)), high: isMax });
+    }
+    // remove insignificant wiggles (pairs with tiny height difference)
+    const thr = opts.minDiff ?? 1.0;
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (let i = 0; i < ex.length - 1; i++) {
+        if (Math.abs(ex[i].h - ex[i + 1].h) < thr) { ex.splice(i, 2); changed = true; break; }
+      }
+    }
+    // enforce alternation
+    const alt = [];
+    for (const e of ex) {
+      const last = alt[alt.length - 1];
+      if (last && last.high === e.high) { if ((e.high && e.h > last.h) || (!e.high && e.h < last.h)) alt[alt.length - 1] = e; }
+      else alt.push(e);
+    }
+    return alt.filter(e => e.t >= t0 && e.t <= t1);
+  }
+
+  // Lowest / highest astronomical tide over one nodal cycle (hourly from a start year)
+  function datums(P, startMs, years = 18.61, stepH = 1) {
+    let lo = Infinity, hi = -Infinity, tlo = 0, thi = 0;
+    const step = stepH * 3600000, end = startMs + years * 365.25 * 86400000;
+    // cache astro every step; heavy part is heightAt
+    for (let t = startMs; t < end; t += step) {
+      const v = heightAt(P, astro(t));
+      if (v < lo) { lo = v; tlo = t; }
+      if (v > hi) { hi = v; thi = t; }
+    }
+    // refine around extremes at 6-min resolution
+    const refine = (tc, sign) => { let best = sign < 0 ? Infinity : -Infinity, bt = tc; for (let t = tc - 3 * 3600000; t <= tc + 3 * 3600000; t += 360000) { const v = heightAt(P, astro(t)); if (sign < 0 ? v < best : v > best) { best = v; bt = t; } } return [best, bt]; };
+    const [LAT, tLAT] = refine(tlo, -1), [HAT, tHAT] = refine(thi, 1);
+    return { LAT, HAT, tLAT, tHAT };
+  }
+
+  return { MAJOR, MINOR, NODAL, speed, astro, prepare, predict, heightAt, extremes, datums, inferMinor };
+})();
+if (typeof module !== 'undefined') module.exports = TideEngine;
+
+/* Loading and interpolation of the EOT20 harmonic-constant grid (1/8 degree),
+   split into 30x30 degree gzip blocks with a planar predictor. */
+const TideData = (() => {
+  const CONST = ['m2', 's2', 'n2', 'k2', 'k1', 'o1', 'p1', 'q1', '2n2', 'j1', 't2', 'm4', 's1', 'mf', 'mm', 'sa', 'ssa'];
+  const NC = CONST.length, B = 240, NN = 241, RES = 8; // nodes per degree
+  let base = 'data/';
+  let available = null;          // Set of 'br_bc' keys that exist (null = unknown)
+  let loader = null;             // optional custom loader(path) -> ArrayBuffer
+  const blocks = new Map();      // key -> Promise<block|null>
+  const loaded = new Map();      // key -> block|null (resolved)
+
+  async function gunzip(buf) {
+    const u8 = new Uint8Array(buf);
+    if (!(u8[0] === 0x1f && u8[1] === 0x8b)) return u8; // already inflated by the server
+    if (typeof DecompressionStream !== 'undefined') {
+      const ds = new DecompressionStream('gzip');
+      const out = new Response(new Blob([u8]).stream().pipeThrough(ds));
+      return new Uint8Array(await out.arrayBuffer());
+    }
+    if (typeof pako !== 'undefined') return pako.ungzip(u8);
+    throw new Error('Trình duyệt không hỗ trợ giải nén gzip');
+  }
+  async function fetchBin(path) {
+    if (loader) return gunzip(await loader(path));
+    const r = await fetch(path);
+    if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + path);
+    if (!path.endsWith('.txt')) return gunzip(await r.arrayBuffer());
+    // binary payloads are shipped as base64 text
+    const txt = (await r.text()).replace(/\s+/g, '');
+    const bin = atob(txt); const u8 = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    return gunzip(u8);
+  }
+
+  function decodeBlock(u8) {
+    const dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
+    const magic = String.fromCharCode(u8[0], u8[1], u8[2], u8[3]);
+    if (magic !== 'EOT1') throw new Error('Tệp dữ liệu hỏng');
+    const br = dv.getUint16(4, true), bc = dv.getUint16(6, true), nr = dv.getUint16(8, true), ncol = dv.getUint16(10, true), nc = dv.getUint16(12, true);
+    const nv = dv.getUint32(14, true);
+    let off = 18;
+    const nmask = Math.ceil(nr * ncol / 8);
+    const mask = new Uint8Array(nr * ncol);
+    for (let i = 0; i < nr * ncol; i++) mask[i] = (u8[off + (i >> 3)] >> (7 - (i & 7))) & 1;
+    off += nmask;
+    const idx = new Int32Array(nr * ncol).fill(-1);
+    let n = 0; for (let i = 0; i < nr * ncol; i++) if (mask[i]) idx[i] = n++;
+    const vals = new Int16Array(nv * nc * 2); // layout: [node][comp] comp = 2k (re), 2k+1 (im)
+    const grid = new Int32Array(nr * ncol);
+    for (let comp = 0; comp < nc * 2; comp++) {
+      let p = 0;
+      for (let r = 0; r < nr; r++) {
+        for (let c = 0; c < ncol; c++) {
+          const i = r * ncol + c;
+          if (!mask[i]) continue;
+          const L = c > 0 && mask[i - 1], U = r > 0 && mask[i - ncol], UL = r > 0 && c > 0 && mask[i - ncol - 1];
+          const pred = (L && U && UL) ? grid[i - 1] + grid[i - ncol] - grid[i - ncol - 1] : L ? grid[i - 1] : U ? grid[i - ncol] : 0;
+          const d = dv.getInt16(off + 2 * (comp * nv + p), true);
+          const v = pred + d;
+          grid[i] = v;
+          vals[idx[i] * nc * 2 + comp] = v;
+          p++;
+        }
+      }
+    }
+    return { br, bc, nr, ncol, nc, nv, mask, idx, vals };
+  }
+
+  const key = (br, bc) => br + '_' + bc;
+  function getBlock(br, bc) {
+    const k = key(br, bc);
+    if (available && !available.has(k)) { loaded.set(k, null); return Promise.resolve(null); }
+    if (!blocks.has(k)) {
+      const p = fetchBin(base + 'b' + k + '.txt').then(decodeBlock).catch(e => {
+        if (String(e).includes('HTTP 404')) return null; // all-land block
+        blocks.delete(k); throw e;
+      }).then(b => { loaded.set(k, b); return b; });
+      blocks.set(k, p);
+    }
+    return blocks.get(k);
+  }
+  const peekBlock = (br, bc) => loaded.get(key(br, bc));
+
+  // global node (row, col) -> complex constants in cm, or null for land
+  function nodeValue(b, lr, lc) {
+    const i = lr * b.ncol + lc; const j = b.idx[i]; if (j < 0) return null;
+    const o = j * b.nc * 2; const out = new Float64Array(b.nc * 2);
+    for (let k = 0; k < b.nc * 2; k++) out[k] = b.vals[o + k] / 10;
+    return out;
+  }
+  function blockFor(gr, gc) { // global node indices -> block + local indices
+    gc = ((gc % 2880) + 2880) % 2880;
+    let br = Math.min(Math.floor(gr / B), 5), bc = Math.floor(gc / B);
+    return { br, bc, lr: gr - br * B, lc: gc - bc * B };
+  }
+  const toObj = arr => { const o = {}; CONST.forEach((c, k) => { o[c] = [arr[2 * k], arr[2 * k + 1]]; }); return o; };
+
+  function distKm(lat1, lon1, lat2, lon2) {
+    const R = 6371, d2r = Math.PI / 180;
+    const dlat = (lat2 - lat1) * d2r, dlon = (((lon2 - lon1 + 540) % 360) - 180) * d2r;
+    const a = Math.sin(dlat / 2) ** 2 + Math.cos(lat1 * d2r) * Math.cos(lat2 * d2r) * Math.sin(dlon / 2) ** 2;
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
+  }
+
+  // Constants at an arbitrary point. Bilinear on complex values over valid corners;
+  // if all four corners are land, snap to the nearest ocean node (<= maxKm).
+  async function lookup(lat, lon, maxKm = 60) {
+    lat = Math.max(-90, Math.min(90, lat));
+    const lon360 = ((lon % 360) + 360) % 360;
+    const r = (lat + 90) * RES, c = lon360 * RES;
+    const r0 = Math.min(Math.floor(r), 1439), c0 = Math.floor(c) % 2880;
+    const fy = r - r0, fx = c - Math.floor(c);
+    const corners = [[0, 0, (1 - fy) * (1 - fx)], [0, 1, (1 - fy) * fx], [1, 0, fy * (1 - fx)], [1, 1, fy * fx]];
+    const acc = new Float64Array(NC * 2); let den = 0, nvalid = 0;
+    for (const [dr, dc, w] of corners) {
+      const loc = blockFor(r0 + dr, c0 + dc);
+      const b = await getBlock(loc.br, loc.bc);
+      if (!b) continue;
+      const v = nodeValue(b, loc.lr, loc.lc);
+      if (!v) continue;
+      nvalid++;
+      if (w <= 0) continue;
+      for (let k = 0; k < acc.length; k++) acc[k] += w * v[k];
+      den += w;
+    }
+    if (den > 0) {
+      for (let k = 0; k < acc.length; k++) acc[k] /= den;
+      return { hc: toObj(acc), lat, lon, nodeLat: lat, nodeLon: lon, distKm: 0, mode: nvalid === 4 ? 'grid' : 'coast' };
+    }
+    // nearest ocean node search
+    const R = Math.ceil(maxKm / 111 * RES) + 1;
+    const need = new Set();
+    for (const gr of [r0 - R, r0 + R + 1]) for (const gc of [c0 - R, c0 + R + 1]) {
+      const g = Math.max(0, Math.min(1440, gr)); const loc = blockFor(g, gc); need.add(loc.br + ',' + loc.bc);
+    }
+    const loc0 = blockFor(r0, c0); need.add(loc0.br + ',' + loc0.bc);
+    await Promise.all([...need].map(s => { const [a, b] = s.split(',').map(Number); return getBlock(a, b); }));
+    let best = null;
+    for (let gr = Math.max(0, r0 - R); gr <= Math.min(1440, r0 + R + 1); gr++) {
+      for (let gc = c0 - R; gc <= c0 + R + 1; gc++) {
+        const loc = blockFor(gr, gc); const b = peekBlock(loc.br, loc.bc); if (!b) continue;
+        if (b.idx[loc.lr * b.ncol + loc.lc] < 0) continue;
+        const nlat = gr / RES - 90, nlon = (((gc % 2880) + 2880) % 2880) / RES;
+        const d = distKm(lat, lon, nlat, nlon);
+        if (!best || d < best.d) best = { d, loc, nlat, nlon };
+      }
+    }
+    if (!best || best.d > maxKm) return null;
+    const b = peekBlock(best.loc.br, best.loc.bc);
+    const v = nodeValue(b, best.loc.lr, best.loc.lc);
+    const nlon = best.nlon > 180 ? best.nlon - 360 : best.nlon;
+    return { hc: toObj(v), lat, lon, nodeLat: best.nlat, nodeLon: nlon, distKm: best.d, mode: 'snap' };
+  }
+
+  function configure(o) { if (o.base) base = o.base; if (o.available) available = new Set(o.available); if (o.loader) loader = o.loader; }
+  return { CONST, lookup, getBlock, peekBlock, blockFor, fetchBin, gunzip, distKm, configure, nodeValue };
+})();
+if (typeof module !== 'undefined') module.exports = TideData;
+
+/* Vietnamese lunar calendar (âm lịch), after Hồ Ngọc Đức's published algorithm. */
+const AmLich = (() => {
+  const PI = Math.PI, INT = Math.floor;
+  function jdFromDate(dd, mm, yy) {
+    const a = INT((14 - mm) / 12), y = yy + 4800 - a, m = mm + 12 * a - 3;
+    let jd = dd + INT((153 * m + 2) / 5) + 365 * y + INT(y / 4) - INT(y / 100) + INT(y / 400) - 32045;
+    if (jd < 2299161) jd = dd + INT((153 * m + 2) / 5) + 365 * y + INT(y / 4) - 32083;
+    return jd;
+  }
+  function newMoonDay(k, tz) {
+    const T = k / 1236.85, T2 = T * T, T3 = T2 * T, dr = PI / 180;
+    let Jd1 = 2415020.75933 + 29.53058868 * k + 0.0001178 * T2 - 0.000000155 * T3;
+    Jd1 += 0.00033 * Math.sin((166.56 + 132.87 * T - 0.009173 * T2) * dr);
+    const M = 359.2242 + 29.10535608 * k - 0.0000333 * T2 - 0.00000347 * T3;
+    const Mpr = 306.0253 + 385.81691806 * k + 0.0107306 * T2 + 0.00001236 * T3;
+    const F = 21.2964 + 390.67050646 * k - 0.0016528 * T2 - 0.00000239 * T3;
+    let C1 = (0.1734 - 0.000393 * T) * Math.sin(M * dr) + 0.0021 * Math.sin(2 * dr * M);
+    C1 = C1 - 0.4068 * Math.sin(Mpr * dr) + 0.0161 * Math.sin(dr * 2 * Mpr);
+    C1 = C1 - 0.0004 * Math.sin(dr * 3 * Mpr);
+    C1 = C1 + 0.0104 * Math.sin(dr * 2 * F) - 0.0051 * Math.sin(dr * (M + Mpr));
+    C1 = C1 - 0.0074 * Math.sin(dr * (M - Mpr)) + 0.0004 * Math.sin(dr * (2 * F + M));
+    C1 = C1 - 0.0004 * Math.sin(dr * (2 * F - M)) - 0.0006 * Math.sin(dr * (2 * F + Mpr));
+    C1 = C1 + 0.0010 * Math.sin(dr * (2 * F - Mpr)) + 0.0005 * Math.sin(dr * (2 * Mpr + M));
+    const deltat = T < -11 ? 0.001 + 0.000839 * T + 0.0002261 * T2 - 0.00000845 * T3 - 0.000000081 * T * T3
+      : -0.000278 + 0.000265 * T + 0.000262 * T2;
+    return INT(Jd1 + C1 - deltat + 0.5 + tz / 24);
+  }
+  function sunLongitude(jdn, tz) {
+    const T = (jdn - 2451545.5 - tz / 24) / 36525, T2 = T * T, dr = PI / 180;
+    const M = 357.52910 + 35999.05030 * T - 0.0001559 * T2 - 0.00000048 * T * T2;
+    const L0 = 280.46645 + 36000.76983 * T + 0.0003032 * T2;
+    let DL = (1.914600 - 0.004817 * T - 0.000014 * T2) * Math.sin(dr * M);
+    DL += (0.019993 - 0.000101 * T) * Math.sin(dr * 2 * M) + 0.000290 * Math.sin(dr * 3 * M);
+    let L = (L0 + DL) * dr;
+    L = L - PI * 2 * INT(L / (PI * 2));
+    return INT(L / PI * 6);
+  }
+  function lunarMonth11(yy, tz) {
+    const off = jdFromDate(31, 12, yy) - 2415021;
+    const k = INT(off / 29.530588853);
+    let nm = newMoonDay(k, tz);
+    if (sunLongitude(nm, tz) >= 9) nm = newMoonDay(k - 1, tz);
+    return nm;
+  }
+  function leapMonthOffset(a11, tz) {
+    const k = INT((a11 - 2415021.076998695) / 29.530588853 + 0.5);
+    let last = 0, i = 1, arc = sunLongitude(newMoonDay(k + i, tz), tz);
+    do { last = arc; i++; arc = sunLongitude(newMoonDay(k + i, tz), tz); } while (arc !== last && i < 14);
+    return i - 1;
+  }
+  const cache = new Map();
+  function solar2lunar(dd, mm, yy, tz = 7) {
+    const key = dd + '/' + mm + '/' + yy;
+    if (cache.has(key)) return cache.get(key);
+    const dayNumber = jdFromDate(dd, mm, yy);
+    const k = INT((dayNumber - 2415021.076998695) / 29.530588853);
+    let monthStart = newMoonDay(k + 1, tz);
+    if (monthStart > dayNumber) monthStart = newMoonDay(k, tz);
+    let a11 = lunarMonth11(yy, tz), b11 = a11, lunarYear;
+    if (a11 >= monthStart) { lunarYear = yy; a11 = lunarMonth11(yy - 1, tz); }
+    else { lunarYear = yy + 1; b11 = lunarMonth11(yy + 1, tz); }
+    const lunarDay = dayNumber - monthStart + 1;
+    const diff = INT((monthStart - a11) / 29);
+    let lunarLeap = 0, lunarMonth = diff + 11;
+    if (b11 - a11 > 365) {
+      const leapDiff = leapMonthOffset(a11, tz);
+      if (diff >= leapDiff) { lunarMonth = diff + 10; if (diff === leapDiff) lunarLeap = 1; }
+    }
+    if (lunarMonth > 12) lunarMonth -= 12;
+    if (lunarMonth >= 11 && diff < 4) lunarYear -= 1;
+    const r = { day: lunarDay, month: lunarMonth, year: lunarYear, leap: lunarLeap };
+    cache.set(key, r);
+    return r;
+  }
+  return { solar2lunar };
+})();
+if (typeof module !== 'undefined') module.exports = AmLich;
+
+(() => {
+  'use strict';
+  const $ = (s) => document.querySelector(s);
+  const CFG = window.TIDE_CONFIG;
+  TideData.configure({ base: 'data/', available: CFG.available, loader: async (p) => {
+    const r = await fetch('emb/' + p.replace(/\.txt$/, '.bin'));
+    if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + p);
+    return new Uint8Array(await r.arrayBuffer());
+  } });
+  const E = TideEngine;
+  const HOUR = 3600000, DAY = 86400000, MIN = 60000;
+
+  // ---------------------------------------------------------------- presets
+  const PRESETS = [
+    ['Miền Bắc', [['Cửa Ông (Quảng Ninh)', 21.02, 107.37], ['Bạch Long Vĩ', 20.13, 107.72], ['Hòn Dáu (Hải Phòng)', 20.667, 106.817]]],
+    ['Miền Trung', [['Hòn Ngư (Nghệ An)', 18.80, 105.77], ['Cửa Gianh (Quảng Bình)', 17.70, 106.47], ['Cửa Việt (Quảng Trị)', 16.90, 107.19], ['Đà Nẵng (ngoài vịnh)', 16.13, 108.33], ['Quy Nhơn (Bình Định)', 13.767, 109.25], ['Nha Trang (Khánh Hòa)', 12.20, 109.22], ['Phan Thiết (Bình Thuận)', 10.92, 108.10]]],
+    ['TP. Hồ Chí Minh', [['Sài Gòn – cảng (trong sông)', 10.767, 106.707], ['Cần Thạnh – Cần Giờ', 10.41, 106.97], ['Biển 30/4 – Long Hòa', 10.385, 106.91], ['Cửa Soài Rạp', 10.42, 106.80]]],
+    ['Miền Nam', [['Vũng Tàu', 10.34, 107.07], ['Định An (cửa sông Hậu)', 9.58, 106.40], ['Gành Hào (Bạc Liêu)', 9.03, 105.43], ['Rạch Giá (Kiên Giang)', 10.01, 105.07], ['Hà Tiên', 10.38, 104.47], ['An Thới (Phú Quốc)', 10.02, 104.01]]],
+    ['Đảo xa', [['Côn Đảo', 8.68, 106.61], ['Đảo Hoàng Sa', 16.53, 111.61], ['Trường Sa Lớn', 8.645, 111.92]]]
+  ];
+  const ALLPRESETS = PRESETS.flatMap(([, l]) => l);
+
+  // ---------------------------------------------------------------- constituents info
+  const CINFO = {
+    m2: ['M2', 'Mặt Trăng chính, bán nhật'], s2: ['S2', 'Mặt Trời chính, bán nhật'], n2: ['N2', 'Mặt Trăng elip lớn, bán nhật'],
+    k2: ['K2', 'Xích vĩ Mặt Trăng–Mặt Trời, bán nhật'], k1: ['K1', 'Xích vĩ Mặt Trăng–Mặt Trời, nhật triều'], o1: ['O1', 'Mặt Trăng chính, nhật triều'],
+    p1: ['P1', 'Mặt Trời chính, nhật triều'], q1: ['Q1', 'Mặt Trăng elip lớn, nhật triều'], '2n2': ['2N2', 'Mặt Trăng elip bậc hai, bán nhật'],
+    j1: ['J1', 'Mặt Trăng elip nhỏ, nhật triều'], t2: ['T2', 'Mặt Trời elip lớn, bán nhật'], m4: ['M4', 'Nước nông, ¼ ngày'],
+    s1: ['S1', 'Bức xạ Mặt Trời, nhật'], mf: ['Mf', 'Mặt Trăng nửa tháng'], mm: ['Mm', 'Mặt Trăng tháng'],
+    sa: ['Sa', 'Dao động mùa, chu kỳ năm'], ssa: ['Ssa', 'Dao động nửa năm']
+  };
+
+  // ---------------------------------------------------------------- formatting
+  const nf = (d) => new Intl.NumberFormat('vi-VN', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const NF2 = nf(2), NF1 = nf(1), NF0 = nf(0), NF3 = nf(3);
+  const MINUS = '−';
+  const fmtM = (cm, signed = true) => { const m = cm / 100; const a = NF2.format(Math.abs(m)); const s = m < -0.0049 ? MINUS : (signed && m > 0.0049 ? '+' : ''); return s + a; };
+  const WD = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+  const WDL = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const parts = (ms) => { const d = new Date(ms + state.tz * MIN); return { y: d.getUTCFullYear(), mo: d.getUTCMonth() + 1, d: d.getUTCDate(), h: d.getUTCHours(), mi: d.getUTCMinutes(), wd: d.getUTCDay() }; };
+  const fmtHM = (ms) => { const p = parts(ms + 30000); return pad2(p.h) + ':' + pad2(p.mi); };
+  const fmtDay = (ms) => { const p = parts(ms); return WD[p.wd] + ' ' + p.d + '/' + p.mo; };
+  const fmtDate = (ms) => { const p = parts(ms); return pad2(p.d) + '/' + pad2(p.mo) + '/' + p.y; };
+  const fmtCoord = (lat, lon) => {
+    const f = (v, pos, neg) => NF3.format(Math.abs(v)) + '°' + (v >= 0 ? pos : neg);
+    return f(lat, 'B', 'N') + ', ' + f(((lon + 540) % 360) - 180, 'Đ', 'T');
+  };
+  const tzLabel = (m) => { const s = m < 0 ? MINUS : '+'; const a = Math.abs(m); return 'UTC' + s + Math.floor(a / 60) + (a % 60 ? ':' + pad2(a % 60) : ''); };
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // ---------------------------------------------------------------- state
+  const today = new Date(Date.now() + 420 * MIN);
+  const state = {
+    lat: 10.34, lon: 107.07, name: 'Vũng Tàu',
+    start: today.getUTCFullYear() + '-' + pad2(today.getUTCMonth() + 1) + '-' + pad2(today.getUTCDate()),
+    days: 1, tz: 420, datum: 'CD', source: 'model', overlay: false, step: 60,
+    model: null, P: null, gauge: null, stations: null,
+    datums: { model: null, gauge: null }, run: 0, series: null
+  };
+  try { const saved = JSON.parse(localStorage.getItem('connuoc') || 'null'); if (saved) { for (const k of ['lat', 'lon', 'name', 'tz']) if (saved[k] !== undefined) state[k] = saved[k]; } } catch (e) { /* storage unavailable */ }
+  const persist = () => { try { localStorage.setItem('connuoc', JSON.stringify({ lat: state.lat, lon: state.lon, name: state.name, days: state.days, tz: state.tz, datum: state.datum })); } catch (e) { /* ignore */ } };
+
+  // ---------------------------------------------------------------- coordinate parsing
+  function parseCoords(str) {
+    const s = str.trim().replace(/[′’]/g, "'").replace(/[″”]/g, '"').replace(/º/g, '°');
+    if (!s) return null;
+    const valid = (lat, lon) => { if (!isFinite(lat) || !isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 360) return null; if (lon > 180) lon -= 360; return { lat, lon }; };
+    const at = s.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/); if (at) return valid(+at[1], +at[2]);
+    const vn = s.match(/^(-?\d+,\d+)\s*[;\s]\s*(-?\d+,\d+)$/); if (vn) return valid(parseFloat(vn[1].replace(',', '.')), parseFloat(vn[2].replace(',', '.')));
+    const hasDMS = /[°'"]/.test(s) || /\d\s*[NSEWBĐT](?![A-Za-zÀ-ỹ])/i.test(s);
+    if (hasDMS) {
+      const toks = s.match(/-?\d+(?:[.,]\d+)?\s*[°'"]?|[NSEWBĐT](?![A-Za-zÀ-ỹ])/gi) || [];
+      const groups = []; let cur = null;
+      for (const tk of toks) {
+        if (/^[NSEWBĐT]$/i.test(tk)) { const h = tk.toUpperCase(); if (cur) { cur.h = h; groups.push(cur); cur = null; } else if (groups.length && !groups[groups.length - 1].h) groups[groups.length - 1].h = h; continue; }
+        const t = tk.trim(); const sym = /[°'"]$/.test(t) ? t.slice(-1) : ''; const num = parseFloat(t.replace(',', '.'));
+        if (!cur || sym === '°') { if (cur) groups.push(cur); cur = { d: num, neg: t.startsWith('-'), m: 0, s: 0, k: 1, h: '' }; continue; }
+        if (sym === "'" || (!sym && cur.k === 1)) { cur.m = num; cur.k = 2; } else { cur.s = num; cur.k = 3; }
+      }
+      if (cur) groups.push(cur);
+      if (groups.length === 2) {
+        const val = (g) => (g.neg ? -1 : 1) * (Math.abs(g.d) + g.m / 60 + g.s / 3600);
+        let lat, lon;
+        for (const g of groups) {
+          if ('NSB'.includes(g.h) && g.h) lat = g.h === 'S' ? -Math.abs(val(g)) : val(g);
+          else if ('EWĐT'.includes(g.h) && g.h) lon = g.h === 'W' || g.h === 'T' ? -Math.abs(val(g)) : val(g);
+        }
+        if (lat === undefined) lat = val(groups[0] === groups.find((g) => 'EWĐT'.includes(g.h) && g.h) ? groups[1] : groups[0]);
+        if (lon === undefined) lon = val(groups[1] === groups.find((g) => 'NSB'.includes(g.h) && g.h) ? groups[0] : groups[1]);
+        return valid(lat, lon);
+      }
+    }
+    const m = s.match(/(-?\d+(?:\.\d+)?)\s*[,;\s]\s*(-?\d+(?:\.\d+)?)/);
+    if (m) return valid(parseFloat(m[1]), parseFloat(m[2]));
+    return null;
+  }
+
+  // ---------------------------------------------------------------- colours
+  function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function isDark() { return cssVar('--bg').toLowerCase() === '#0a131b'; }
+  function hex(h) { h = h.replace('#', ''); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); }
+  let LUT = null, lutDark = null;
+  function buildLUT() {
+    const dark = isDark();
+    if (LUT && lutDark === dark) return LUT;
+    const stops = (dark ? ['#0e1f2d', '#12314d', '#1a4f86', '#2f78c9', '#6aa9ea', '#bcdcfb'] : ['#eef5fb', '#cde2fb', '#86b6ef', '#3987e5', '#1c5cab', '#0d366b']).map(hex);
+    LUT = new Uint8ClampedArray(256 * 4);
+    for (let i = 1; i < 256; i++) {
+      const R = (i - 1) * 2.5; // cm
+      const t = Math.sqrt(Math.min(R, 600) / 600) * (stops.length - 1);
+      const k = Math.min(Math.floor(t), stops.length - 2), f = t - k;
+      for (let c = 0; c < 3; c++) LUT[i * 4 + c] = stops[k][c] + (stops[k + 1][c] - stops[k][c]) * f;
+      LUT[i * 4 + 3] = 255;
+    }
+    lutDark = dark;
+    return LUT;
+  }
+  function drawLegend() {
+    const L = buildLUT(); const cols = [];
+    for (let i = 0; i <= 10; i++) { const idx = 1 + Math.round(i / 10 * 240); cols.push(`rgb(${L[idx * 4]},${L[idx * 4 + 1]},${L[idx * 4 + 2]}) ${i * 10}%`); }
+    $('#legendBar').style.background = `linear-gradient(90deg, ${cols.join(',')})`;
+    const ticks = [0, 0.5, 1, 2, 4, 6];
+    $('#legendTicks').innerHTML = ticks.map((m) => `<span style="left:${Math.sqrt(m / 6) * 100}%">${NF1.format(m).replace(',0', '')}${m === 6 ? ' m' : ''}</span>`).join('');
+  }
+
+  // ---------------------------------------------------------------- map
+  const Map2 = (() => {
+    const cv = $('#map'); const ctx = cv.getContext('2d');
+    let W0 = 0, H0 = 0, dpr = 1;
+    const view = { lon: 108.5, lat: 14.5, z: 4.6 };
+    let overview = null, ovCanvas = null, ovDark = null;
+    let land50 = null, land10 = null, land10Loading = false;
+    const merc = (lat) => { const s = Math.sin(Math.max(-85.0511, Math.min(85.0511, lat)) * Math.PI / 180); return 0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI); };
+    const imerc = (y) => (Math.atan(Math.exp((0.5 - y) * 2 * Math.PI)) * 2 - Math.PI / 2) * 180 / Math.PI;
+    const worldSize = () => 256 * Math.pow(2, view.z);
+    function toScreen(lon, lat) { const W = worldSize(); const x = (lon + 180) / 360 * W - ((view.lon + 180) / 360 * W) + W0 / 2; const y = merc(lat) * W - merc(view.lat) * W + H0 / 2; return [x, y]; }
+    function toLonLat(x, y) { const W = worldSize(); const wx = (view.lon + 180) / 360 * W + x - W0 / 2; const wy = merc(view.lat) * W + y - H0 / 2; let lon = wx / W * 360 - 180; lon = ((lon + 540) % 360) - 180; return [lon, imerc(Math.max(0, Math.min(1, wy / W)))]; }
+
+    function resize() {
+      const r = cv.getBoundingClientRect(); dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W0 = r.width; H0 = r.height; cv.width = Math.round(W0 * dpr); cv.height = Math.round(H0 * dpr); draw();
+    }
+    function buildOverview() {
+      if (!overview) return;
+      const dark = isDark(); if (ovCanvas && ovDark === dark) return;
+      const L = buildLUT(); const S = 2048; const c = document.createElement('canvas'); c.width = S; c.height = S;
+      const g = c.getContext('2d'); const img = g.createImageData(S, S); const d = img.data;
+      const { rows, cols, q } = overview; const colIdx = new Int32Array(S);
+      for (let x = 0; x < S; x++) { const lon = (x + 0.5) / S * 360 - 180; colIdx[x] = Math.round(((lon + 360) % 360) * 4) % cols; }
+      for (let y = 0; y < S; y++) {
+        const lat = imerc((y + 0.5) / S); const r = Math.round((lat + 90) * 4); if (r < 0 || r >= rows) continue;
+        const ro = r * cols, po = y * S * 4;
+        for (let x = 0; x < S; x++) { const v = q[ro + colIdx[x]]; if (!v) continue; const o = po + x * 4; d[o] = L[v * 4]; d[o + 1] = L[v * 4 + 1]; d[o + 2] = L[v * 4 + 2]; d[o + 3] = 255; }
+      }
+      g.putImageData(img, 0, 0); ovCanvas = c; ovDark = dark;
+    }
+    function decodeLand(rings) {
+      return rings.map((d) => {
+        const n = d.length / 2; const X = new Float64Array(n), Y = new Float64Array(n);
+        let x = 0, y = 0, minX = 1, maxX = 0, minY = 1, maxY = 0;
+        for (let i = 0; i < n; i++) { x += d[2 * i]; y += d[2 * i + 1]; const lon = x / 100, lat = y / 100; X[i] = (lon + 180) / 360; Y[i] = merc(lat); if (X[i] < minX) minX = X[i]; if (X[i] > maxX) maxX = X[i]; if (Y[i] < minY) minY = Y[i]; if (Y[i] > maxY) maxY = Y[i]; }
+        return { X, Y, minX, maxX, minY, maxY };
+      });
+    }
+    async function loadLand(res) {
+      const u8 = await TideData.fetchBin(`land-${res}.txt`);
+      return decodeLand(JSON.parse(new TextDecoder().decode(u8)));
+    }
+    // colour class for a node from its constants (spring-range proxy, same as overview)
+    const blockClass = new Map();
+    function classesFor(b) {
+      const k = b.br + '_' + b.bc; if (blockClass.has(k)) return blockClass.get(k);
+      const cls = new Uint8Array(b.nv); const stride = b.nc * 2;
+      for (let j = 0; j < b.nv; j++) {
+        const o = j * stride; let R = 0;
+        for (const ci of [0, 1, 4, 5]) R += Math.hypot(b.vals[o + 2 * ci], b.vals[o + 2 * ci + 1]) / 10;
+        cls[j] = Math.min(255, Math.round(2 * R / 2.5) + 1);
+      }
+      blockClass.set(k, cls); return cls;
+    }
+    let pendingLoads = false;
+    function ensureBlocks() {
+      if (view.z < 5.3 || pendingLoads) return;
+      const [lonA, latB] = toLonLat(0, H0), [lonB, latA] = toLonLat(W0, 0);
+      const need = new Set();
+      for (const la of [latB, latA, (latA + latB) / 2]) for (const lo of [lonA, lonB, (lonA + lonB) / 2]) {
+        const loc = TideData.blockFor(Math.round((la + 90) * 8), Math.round(((lo + 360) % 360) * 8)); need.add(loc.br + ',' + loc.bc);
+      }
+      const ps = [];
+      for (const s of need) { const [a, b] = s.split(',').map(Number); if (TideData.peekBlock(a, b) === undefined) ps.push(TideData.getBlock(a, b)); }
+      if (ps.length) { pendingLoads = true; Promise.allSettled(ps).then(() => { pendingLoads = false; draw(); }); }
+    }
+    let raf = 0; function draw() { if (!raf) raf = requestAnimationFrame(() => { raf = 0; render(); }); }
+    function render() {
+      if (!W0) return;
+      const col = { sea: cssVar('--sea0'), land: cssVar('--land'), coast: cssVar('--coast'), grat: cssVar('--grat'), ink: cssVar('--ink'), ink2: cssVar('--ink-2'), ink3: cssVar('--ink-3'), op: cssVar('--overprint'), gauge: cssVar('--gauge'), surf: cssVar('--surface') };
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = col.sea; ctx.fillRect(0, 0, W0, H0);
+      const W = worldSize(); const cx = (view.lon + 180) / 360 * W - W0 / 2, cy = merc(view.lat) * W - H0 / 2;
+      const copies = [-1, 0, 1].filter((k) => k * W - cx < W0 && (k + 1) * W - cx > 0);
+      // overview raster
+      buildOverview();
+      if (ovCanvas) {
+        ctx.imageSmoothingEnabled = view.z < 3.5;
+        for (const k of copies) {
+          const dx = k * W - cx; // screen x of world origin
+          const sx0 = Math.max(0, -dx) / W * 2048, sx1 = Math.min(W, W0 - dx) / W * 2048;
+          const sy0 = Math.max(0, cy) / W * 2048, sy1 = Math.min(W, cy + H0) / W * 2048;
+          if (sx1 > sx0 && sy1 > sy0) ctx.drawImage(ovCanvas, sx0, sy0, sx1 - sx0, sy1 - sy0, dx + sx0 / 2048 * W, sy0 / 2048 * W - cy, (sx1 - sx0) / 2048 * W, (sy1 - sy0) / 2048 * W);
+        }
+      }
+      // native grid cells when zoomed in
+      const cell = W / 360 / 8;
+      if (cell >= 3.2) {
+        ensureBlocks(); const L = buildLUT();
+        const [lonA, latB] = toLonLat(0, H0), [lonB, latA] = toLonLat(W0, 0);
+        const r0 = Math.max(0, Math.floor((latB + 90) * 8) - 1), r1 = Math.min(1440, Math.ceil((latA + 90) * 8) + 1);
+        let c0 = Math.floor(((lonA + 360) % 360) * 8) - 1; let span = Math.ceil(((lonB - lonA + 360) % 360 || 360) * 8) + 3;
+        if ((r1 - r0) * span < 60000) {
+          for (let r = r0; r <= r1; r++) {
+            const lat = r / 8 - 90; const yC = merc(lat) * W - cy; const yT = merc(lat + 1 / 16) * W - cy, yB = merc(lat - 1 / 16) * W - cy;
+            for (let c = c0; c < c0 + span; c++) {
+              const loc = TideData.blockFor(r, c); const b = TideData.peekBlock(loc.br, loc.bc); if (!b) continue;
+              const j = b.idx[loc.lr * b.ncol + loc.lc]; if (j < 0) continue;
+              const v = classesFor(b)[j];
+              let lon = (((c % 2880) + 2880) % 2880) / 8; if (lon > 180) lon -= 360;
+              let x = (lon + 180) / 360 * W - cx; if (x < -cell) x += W; if (x > W0 + cell) x -= W;
+              ctx.fillStyle = `rgb(${L[v * 4]},${L[v * 4 + 1]},${L[v * 4 + 2]})`;
+              ctx.fillRect(x - cell / 2, yT, cell + 0.6, yB - yT + 0.6);
+            }
+          }
+        }
+      }
+      // land
+      const land = view.z >= 5 && land10 ? land10 : land50;
+      if (view.z >= 5 && !land10 && !land10Loading) { land10Loading = true; loadLand('10m').then((l) => { land10 = l; draw(); }).catch(() => { land10Loading = false; }); }
+      if (land) {
+        ctx.beginPath();
+        for (const k of copies) {
+          const ox = k * W - cx;
+          const vx0 = (-ox) / W, vx1 = (W0 - ox) / W, vy0 = cy / W, vy1 = (cy + H0) / W;
+          for (const g of land) {
+            if (g.maxX < vx0 || g.minX > vx1 || g.maxY < vy0 || g.minY > vy1) continue;
+            const { X, Y } = g; ctx.moveTo(X[0] * W + ox, Y[0] * W - cy);
+            for (let i = 1; i < X.length; i++) ctx.lineTo(X[i] * W + ox, Y[i] * W - cy);
+            ctx.closePath();
+          }
+        }
+        ctx.fillStyle = col.land; ctx.fill('evenodd');
+        ctx.lineWidth = 0.8; ctx.strokeStyle = col.coast; ctx.stroke();
+      }
+      // graticule
+      const stepDeg = view.z < 3 ? 30 : view.z < 4.5 ? 10 : view.z < 6 ? 5 : view.z < 7.5 ? 1 : 0.5;
+      ctx.strokeStyle = col.grat; ctx.lineWidth = 1; ctx.beginPath();
+      const [lonA, latB] = toLonLat(0, H0), [lonB, latA] = toLonLat(W0, 0);
+      const labs = [];
+      for (let la = Math.ceil(latB / stepDeg) * stepDeg; la <= latA; la += stepDeg) { const y = merc(la) * W - cy; ctx.moveTo(0, y); ctx.lineTo(W0, y); labs.push([2, y - 3, fmtDeg(la, 'B', 'N')]); }
+      let lo = Math.ceil(lonA / stepDeg) * stepDeg; const lonEnd = lonA + (((lonB - lonA) + 360) % 360 || 360);
+      for (; lo <= lonEnd; lo += stepDeg) { let x = (lo + 180) / 360 * W - cx; while (x < 0) x += W; while (x > W0) x -= W; ctx.moveTo(x, 0); ctx.lineTo(x, H0); labs.push([x + 3, 11, fmtDeg(((lo + 540) % 360) - 180, 'Đ', 'T')]); }
+      ctx.stroke();
+      ctx.font = '10px "IBM Plex Mono", monospace'; ctx.fillStyle = col.ink3;
+      for (const [x, y, t] of labs) if (y > 14 && y < H0 - 4 || y === 11) ctx.fillText(t, x, y);
+      // gauges
+      if (state.stations && view.z >= 3.2) {
+        ctx.fillStyle = col.gauge; ctx.strokeStyle = col.surf; ctx.lineWidth = 1;
+        const s = view.z >= 6 ? 5 : 4;
+        for (const st of state.stations) {
+          const p = project(st[1], st[2]); if (!p) continue;
+          ctx.beginPath(); ctx.moveTo(p[0], p[1] - s); ctx.lineTo(p[0] + s, p[1] + s * 0.8); ctx.lineTo(p[0] - s, p[1] + s * 0.8); ctx.closePath(); ctx.fill(); ctx.stroke();
+        }
+      }
+      // presets
+      if (view.z >= 3.8) {
+        ctx.font = '11px "Be Vietnam Pro", sans-serif';
+        const labelBoxes = []; const spx = project(state.lat, state.lon); if (spx) labelBoxes.push([spx[0] - 12, spx[1] - 12, spx[0] + 12, spx[1] + 12]);
+        for (const [n, la, lo2] of ALLPRESETS) {
+          const p = project(la, lo2); if (!p) continue;
+          ctx.fillStyle = col.ink2; ctx.beginPath(); ctx.arc(p[0], p[1], 3, 0, 7); ctx.fill();
+          if (view.z >= 5.2) {
+            const txt = n.replace(/ \(.*\)/, ''); const w = ctx.measureText(txt).width; const box = [p[0] + 5, p[1] - 8, p[0] + 7 + w, p[1] + 6];
+            if (!labelBoxes.some((q) => box[0] < q[2] && box[2] > q[0] && box[1] < q[3] && box[3] > q[1])) { labelBoxes.push(box); ctx.fillStyle = col.ink; ctx.fillText(txt, p[0] + 6, p[1] + 4); }
+          }
+        }
+      }
+      // selection
+      const sp = project(state.lat, state.lon);
+      if (state.model && state.model.mode === 'snap') {
+        const np = project(state.model.nodeLat, state.model.nodeLon);
+        if (sp && np) { ctx.setLineDash([3, 3]); ctx.strokeStyle = col.op; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(sp[0], sp[1]); ctx.lineTo(np[0], np[1]); ctx.stroke(); ctx.setLineDash([]); }
+        if (np) { ctx.fillStyle = col.op; ctx.fillRect(np[0] - 3.5, np[1] - 3.5, 7, 7); }
+      }
+      if (sp) {
+        ctx.strokeStyle = col.surf; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(sp[0], sp[1], 8, 0, 7); ctx.stroke();
+        ctx.strokeStyle = col.op; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(sp[0], sp[1], 8, 0, 7); ctx.stroke();
+        ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(sp[0] - 14, sp[1]); ctx.lineTo(sp[0] - 9, sp[1]); ctx.moveTo(sp[0] + 9, sp[1]); ctx.lineTo(sp[0] + 14, sp[1]); ctx.moveTo(sp[0], sp[1] - 14); ctx.lineTo(sp[0], sp[1] - 9); ctx.moveTo(sp[0], sp[1] + 9); ctx.lineTo(sp[0], sp[1] + 14); ctx.stroke();
+      }
+    }
+    function fmtDeg(v, pos, neg) { const a = Math.abs(v); return (Number.isInteger(a) ? a : NF1.format(a)) + '°' + (v === 0 ? '' : v > 0 ? pos : neg); }
+    function project(lat, lon) {
+      let [x, y] = toScreen(lon, lat); const W = worldSize();
+      while (x < -20) x += W; while (x > W0 + 20) x -= W;
+      if (x < -20 || x > W0 + 20 || y < -20 || y > H0 + 20) return null; return [x, y];
+    }
+    // interaction
+    const ptrs = new Map(); let drag = null, pinch = null;
+    cv.addEventListener('pointerdown', (e) => { cv.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, [e.offsetX, e.offsetY]); if (ptrs.size === 1) drag = { x: e.offsetX, y: e.offsetY, lon: view.lon, lat: view.lat, moved: 0, t: Date.now() }; else if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), z: view.z }; drag = null; } });
+    cv.addEventListener('pointermove', (e) => {
+      const [lon, lat] = toLonLat(e.offsetX, e.offsetY); $('#mapCoord').textContent = fmtCoord(lat, lon);
+      if (!ptrs.has(e.pointerId)) return; ptrs.set(e.pointerId, [e.offsetX, e.offsetY]);
+      if (pinch && ptrs.size === 2) { const [a, b] = [...ptrs.values()]; const d = Math.hypot(a[0] - b[0], a[1] - b[1]); setZoom(pinch.z + Math.log2(d / pinch.d), (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, true); return; }
+      if (drag) {
+        const dx = e.offsetX - drag.x, dy = e.offsetY - drag.y; drag.moved = Math.max(drag.moved, Math.hypot(dx, dy));
+        const W = worldSize(); view.lon = drag.lon - dx / W * 360; view.lon = ((view.lon + 540) % 360) - 180;
+        const my = Math.max(0.02, Math.min(0.98, merc(drag.lat) - dy / W)); view.lat = imerc(my); draw();
+      }
+    });
+    const end = (e) => {
+      if (drag && ptrs.size === 1 && drag.moved < 6 && Date.now() - drag.t < 700) pick(e.offsetX, e.offsetY);
+      ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = null; if (ptrs.size === 0) drag = null;
+    };
+    cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', (e) => { ptrs.delete(e.pointerId); drag = null; pinch = null; });
+    cv.addEventListener('wheel', (e) => { e.preventDefault(); setZoom(view.z - e.deltaY * (e.deltaMode ? 0.05 : 0.0022), e.offsetX, e.offsetY); }, { passive: false });
+    cv.addEventListener('keydown', (e) => {
+      const W = worldSize(); const k = e.key; let used = true;
+      if (k === '+' || k === '=') setZoom(view.z + 0.5); else if (k === '-') setZoom(view.z - 0.5);
+      else if (k === 'ArrowLeft') view.lon -= 60 / W * 360; else if (k === 'ArrowRight') view.lon += 60 / W * 360;
+      else if (k === 'ArrowUp') view.lat = imerc(Math.max(0.02, merc(view.lat) - 60 / W)); else if (k === 'ArrowDown') view.lat = imerc(Math.min(0.98, merc(view.lat) + 60 / W));
+      else if (k === 'Enter') { select(view.lat, view.lon, null); } else used = false;
+      if (used) { e.preventDefault(); draw(); }
+    });
+    function setZoom(z, ax = W0 / 2, ay = H0 / 2, abs) {
+      z = Math.max(1, Math.min(10.5, z));
+      const [lonA, latA] = toLonLat(ax, ay); view.z = z;
+      const W = worldSize(); // keep anchor fixed
+      view.lon = lonA - (ax - W0 / 2) / W * 360; view.lon = ((view.lon + 540) % 360) - 180;
+      view.lat = imerc(Math.max(0.02, Math.min(0.98, merc(latA) - (ay - H0 / 2) / W)));
+      draw();
+    }
+    function pick(x, y) {
+      // gauge hit test first
+      if (state.stations && view.z >= 3.2) {
+        let best = null;
+        for (const st of state.stations) { const p = project(st[1], st[2]); if (!p) continue; const d = Math.hypot(p[0] - x, p[1] - y); if (d < 9 && (!best || d < best.d)) best = { d, st }; }
+        if (best) { select(best.st[1], best.st[2], 'Trạm ' + best.st[0], best.st); return; }
+      }
+      if (view.z >= 3.8) for (const [n, la, lo] of ALLPRESETS) { const p = project(la, lo); if (p && Math.hypot(p[0] - x, p[1] - y) < 8) { select(la, lo, n); return; } }
+      const [lon, lat] = toLonLat(x, y); select(lat, lon, null);
+    }
+    $('#zin').onclick = () => setZoom(view.z + 1); $('#zout').onclick = () => setZoom(view.z - 1);
+    $('#zsel').onclick = () => { view.lon = state.lon; view.lat = state.lat; if (view.z < 6) view.z = 6.5; draw(); };
+    new ResizeObserver(resize).observe(cv);
+    return {
+      draw, resize, view,
+      async init() {
+        const [ov, l50] = await Promise.all([TideData.fetchBin('overview.txt'), loadLand('50m')]);
+        const dv = new DataView(ov.buffer, ov.byteOffset); overview = { rows: dv.getUint16(4, true), cols: dv.getUint16(6, true), q: ov.subarray(8) };
+        land50 = l50; draw();
+      },
+      center(lat, lon, minZ) { const [x, y] = toScreen(lon, lat); if (minZ && view.z < minZ) view.z = minZ; if (x < 30 || x > W0 - 30 || y < 30 || y > H0 - 30 || minZ) { view.lon = lon; view.lat = lat; } draw(); },
+      themeChanged() { ovCanvas = null; draw(); }
+    };
+  })();
+
+  // ---------------------------------------------------------------- stations
+  async function loadStations() {
+    const u8 = await TideData.fetchBin('stations.txt');
+    state.stations = JSON.parse(new TextDecoder().decode(u8));
+    Map2.draw();
+  }
+  function nearestStation(lat, lon) {
+    if (!state.stations) return null;
+    let best = null;
+    for (const s of state.stations) { if (Math.abs(s[1] - lat) > 2) continue; const d = TideData.distKm(lat, lon, s[1], s[2]); if (!best || d < best.d) best = { d, s }; }
+    return best && best.d <= 100 ? best : null;
+  }
+  const SRCNAME = { T: 'TICON-4', N: 'NOAA', C: 'CHS Canada', V: 'Bảng thủy triều VN, phân tích lại' };
+  function gaugeFrom(st, d) {
+    const hc = st[5].map(([n, a, p]) => ({ name: n, amplitude: a / 10, phase: p / 10 })); // amplitude in cm
+    return { st, distKm: d, hc, name: st[0], src: SRCNAME[st[3]] || st[3], latOff: st[6] == null ? null : st[6] / 10, cd: st[8] == null ? null : st[8] / 10, derived: st[3] === 'V', id: st[7], predictor: Neaps.createTidePredictor(hc) };
+  }
+
+  // ---------------------------------------------------------------- selection & computation
+  let selectToken = 0;
+  async function select(lat, lon, name, station) {
+    const tok = ++selectToken;
+    if (lon > 180) lon -= 360; if (lon < -180) lon += 360;
+    state.lat = lat; state.lon = lon; state.name = name || null;
+    $('#coord').value = lat.toFixed(4) + ', ' + lon.toFixed(4);
+    $('#coordErr').hidden = true;
+    const ps = $('#preset'); ps.value = ALLPRESETS.findIndex((p) => p[1] === lat && p[2] === lon) + '';
+    if (ps.value === '-1' || ps.value === '') ps.value = '';
+    Map2.center(lat, lon); persist();
+    setStatus('<span class="loading">Đang đọc hằng số mô hình…</span>');
+    let r;
+    try { r = await TideData.lookup(lat, lon, 60); } catch (e) { if (tok !== selectToken) return; setStatus(`<p class="err">Không tải được dữ liệu mô hình (${esc(e.message)}). Kiểm tra kết nối rồi chọn lại điểm.</p>`); return; }
+    if (tok !== selectToken) return;
+    // gauge
+    const near = station ? { d: TideData.distKm(lat, lon, station[1], station[2]), s: station } : nearestStation(lat, lon);
+    state.gauge = near ? gaugeFrom(near.s, near.d) : null;
+    state.datums = { model: null, gauge: null };
+    if (!r) {
+      state.model = null; state.P = null;
+      if (state.gauge && state.gauge.distKm < 30) { state.source = 'gauge'; }
+      else {
+        setStatus(`<p class="err">Điểm ${esc(fmtCoord(lat, lon))} cách biển quá 60 km nên mô hình không có số liệu. Hãy chọn một điểm ngoài biển hoặc cửa sông gần nhất.</p>`);
+        $('#title').textContent = 'Chưa có dự báo cho điểm này'; $('#subtitle').textContent = ''; Map2.draw(); return;
+      }
+    } else {
+      state.model = r; state.P = E.prepare(r.hc);
+      const gaugeCloser = r.mode === 'snap' && state.gauge && state.gauge.distKm < r.distKm && state.gauge.distKm <= 30;
+      state.source = state.gauge && (station || gaugeCloser || (state.gauge.distKm < 3 && r.mode !== 'grid')) ? 'gauge' : 'model';
+    }
+    state.overlay = false;
+    Map2.draw();
+    renderStatus();
+    compute();
+    computeDatums();
+  }
+
+  function setStatus(html) { $('#status').innerHTML = html; }
+  function renderStatus() {
+    const m = state.model, g = state.gauge; let h = '';
+    if (m) {
+      const how = m.mode === 'grid' ? 'Nội suy từ 4 nút lưới biển.' : m.mode === 'coast' ? 'Sát bờ: nội suy từ các nút biển còn lại.'
+        : state.source === 'gauge' && g ? `Ngoài phạm vi mô hình biển (nút biển gần nhất cách ${NF1.format(m.distKm)} km, chỉ dùng khi chọn nguồn “Mô hình”); dự báo theo hằng số trạm.`
+        : `Điểm nằm trong đất liền hoặc vùng mô hình không phủ; dùng nút biển gần nhất ${esc(fmtCoord(m.nodeLat, m.nodeLon))}, cách <b>${NF1.format(m.distKm)} km</b>.`;
+      h += `<div><b>${esc(fmtCoord(state.lat, state.lon))}</b> · ${how}</div>`;
+      if (m.mode === 'snap') {
+        const hcm = state.lat > 10.5 && state.lat < 11.25 && state.lon > 106.3 && state.lon < 107.1;
+        const sg = g && g.id === 'vn/sai-gon';
+        h += hcm && sg
+          ? `<div class="warnline">Nội thành TP.HCM nằm trong sông Sài Gòn – Đồng Nai, ngoài phạm vi mô hình biển. Dự báo dùng <b>trạm Sài Gòn</b> (cách ${NF1.format(g.distKm)} km), hằng số phân tích lại từ bảng thủy triều: đỉnh triều ở đây muộn hơn Vũng Tàu khoảng 2,5–3 giờ. Phú An, Nhà Bè gần giống trạm này; càng xa trạm (Thủ Dầu Một, Biên Hòa) sai lệch càng lớn.</div>`
+          : hcm
+          ? `<div class="warnline">Nội thành TP.HCM (Phú An, Nhà Bè, Thủ Đức…) nằm sâu trong hệ thống sông Sài Gòn – Đồng Nai, cách biển 50–60 km. Mô hình không có lưới trong sông, nên số liệu dưới đây là triều ở cửa sông phía Cần Giờ: đỉnh triều trong thành phố đến muộn hơn và độ cao khác. Để biết mực nước tại Phú An hay Nhà Bè, hãy dùng bảng triều của Đài Khí tượng Thủy văn khu vực Nam Bộ.</div>`
+          : `<div class="small">Nếu điểm bạn cần nằm trong sông hoặc đầm phá, đỉnh triều ở đó thường đến muộn hơn và cao thấp khác so với số liệu ngoài cửa này.</div>`;
+      }
+    } else if (g) {
+      h += `<div><b>${esc(fmtCoord(state.lat, state.lon))}</b> · Mô hình không phủ điểm này; dùng hằng số trạm đo.</div>`;
+    }
+    if (g) {
+      h += `<div class="gauge-card"><div><span class="gname">${esc(g.name)}</span> · ${esc(g.src)}${g.st[4] ? ' · ' + esc(g.st[4]) : ''}</div><div>${g.derived ? 'Trạm gần nhất' : 'Trạm triều ký gần nhất'}, cách ${NF1.format(g.distKm)} km, ${g.hc.length} sóng điều hòa ${g.derived ? 'phân tích từ 43 ngày số liệu giờ của bảng thủy triều 2026' : 'từ số liệu thực đo'}.</div>${g.distKm > 1 ? '<div><button class="btn small" type="button" id="useGauge">Chuyển điểm chọn về trạm này</button></div>' : ''}</div>`;
+    } else if (state.stations) {
+      h += `<div class="small">Không có trạm triều ký nào trong bán kính 100 km.</div>`;
+    }
+    setStatus(h);
+    const ug = $('#useGauge'); if (ug) ug.onclick = () => select(g.st[1], g.st[2], 'Trạm ' + g.st[0], g.st);
+  }
+
+  function period() {
+    const [y, mo, d] = state.start.split('-').map(Number);
+    const t0 = Date.UTC(y, mo - 1, d) - state.tz * MIN; return [t0, t0 + state.days * DAY];
+  }
+  function modelEval(times) { return E.predict(state.P, times); }
+  function gaugeEval(t0, t1, stepSec) {
+    const tl = state.gauge.predictor.getTimelinePrediction({ start: new Date(t0), end: new Date(t1), timeFidelity: stepSec });
+    return { times: tl.map((x) => x.time.getTime()), h: Float64Array.from(tl, (x) => x.level) };
+  }
+  // gauge levels at exactly the given times (neaps aligns its grid to whole steps, so interpolate)
+  function gaugeAt(times) {
+    const step = times.length > 1 ? Math.max(60000, times[1] - times[0]) : 600000;
+    const g = gaugeEval(times[0] - step, times[times.length - 1] + step, Math.min(600, step / 1000));
+    const out = new Float64Array(times.length); const dt = g.times[1] - g.times[0];
+    for (let i = 0; i < times.length; i++) {
+      const f = (times[i] - g.times[0]) / dt; const k = Math.max(0, Math.min(g.h.length - 2, Math.floor(f))); const w = f - k;
+      out[i] = g.h[k] * (1 - w) + g.h[k + 1] * w;
+    }
+    return out;
+  }
+
+  function compute() {
+    if (!state.model && !state.gauge) return;
+    const [t0, t1] = period();
+    const stepMin = state.days <= 3 ? 5 : 10; const times = [];
+    for (let t = t0; t <= t1 + 1; t += stepMin * MIN) times.push(t);
+    const primary = state.source === 'gauge' && state.gauge ? 'gauge' : 'model';
+    let hModel = null, hGauge = null, ex;
+    if (state.model) hModel = modelEval(times);
+    if (state.gauge && (primary === 'gauge' || state.overlay)) {
+      hGauge = gaugeAt(times);
+    }
+    if (primary === 'model') ex = E.extremes(state.P, t0, t1).map((e) => ({ t: e.t, h: e.h, high: e.high }));
+    else ex = state.gauge.predictor.getExtremesPrediction({ start: new Date(t0), end: new Date(t1) }).map((e) => ({ t: e.time.getTime(), h: e.level, high: e.high }));
+    state.series = { t0, t1, times, hModel, hGauge, ex, primary };
+    render();
+  }
+
+  // Lowest/highest astronomical tide: hourly over 18.61 years, run in slices to keep the page responsive
+  let datumToken = 0;
+  async function computeDatums() {
+    const tok = ++datumToken; const start = Date.UTC(2020, 0, 1), end = start + 18.61 * 365.25 * DAY;
+    const job = async (evalRange) => {
+      let lo = Infinity, hi = -Infinity, tlo = 0, thi = 0;
+      for (let a = start; a < end; a += 365 * DAY) {
+        const b = Math.min(end, a + 365 * DAY); const { times, h } = evalRange(a, b, 3600);
+        for (let i = 0; i < h.length; i++) { if (h[i] < lo) { lo = h[i]; tlo = times[i]; } if (h[i] > hi) { hi = h[i]; thi = times[i]; } }
+        await new Promise((r) => setTimeout(r, 0)); if (tok !== datumToken) return null;
+      }
+      const ref = (tc, sign) => { const { h } = evalRange(tc - 2 * HOUR, tc + 2 * HOUR, 300); let v = sign < 0 ? Infinity : -Infinity; for (const x of h) v = sign < 0 ? Math.min(v, x) : Math.max(v, x); return v; };
+      return { LAT: ref(tlo, -1), HAT: ref(thi, 1), tLAT: tlo, tHAT: thi };
+    };
+    if (state.model) {
+      const P = state.P;
+      const r = await job((a, b, s) => { const times = []; for (let t = a; t < b; t += s * 1000) times.push(t); return { times, h: E.predict(P, times) }; });
+      if (!r || tok !== datumToken) return; state.datums.model = r; if (state.datum === 'LAT' || state.series) render();
+    }
+    if (state.gauge) {
+      const g = state.gauge;
+      const r = await job((a, b, s) => gaugeEval(a, b, s));
+      if (!r || tok !== datumToken) return; state.datums.gauge = r; render();
+    }
+  }
+
+  // ---------------------------------------------------------------- rendering
+  function currentDatum() {
+    const primary = state.series ? state.series.primary : 'model';
+    if (state.datum === 'CD') {
+      if (primary === 'gauge' && state.gauge && state.gauge.cd != null) return { off: -state.gauge.cd, ready: true, label: 'CD' };
+      return { off: 0, ready: true, label: 'MSL', noCD: true };
+    }
+    if (state.datum !== 'LAT') return { off: 0, ready: true, label: 'MSL' };
+    const d = state.datums[primary];
+    if (!d) return { off: 0, ready: false, label: 'MSL' };
+    return { off: -d.LAT, ready: true, label: 'LAT' };
+  }
+  function tideType(hc) {
+    const A = (c) => Math.hypot(...hc[c]);
+    const F = (A('k1') + A('o1')) / (A('m2') + A('s2'));
+    const name = F < 0.25 ? 'Bán nhật triều đều' : F < 1.5 ? 'Bán nhật triều không đều' : F < 3 ? 'Nhật triều không đều' : 'Nhật triều đều';
+    return { F, name };
+  }
+  function gaugeHc() { // gauge constituents in engine-like form for tide type
+    const o = {}; for (const c of state.gauge.hc) { const k = c.name.toLowerCase(); if (['m2', 's2', 'k1', 'o1'].includes(k)) o[k] = [c.amplitude * Math.cos(c.phase * Math.PI / 180), -c.amplitude * Math.sin(c.phase * Math.PI / 180)]; }
+    for (const k of ['m2', 's2', 'k1', 'o1']) if (!o[k]) o[k] = [0, 0]; return o;
+  }
+
+  function render() {
+    const S = state.series; if (!S) return;
+    const D = currentDatum(); const primary = S.primary;
+    const hp = primary === 'model' ? S.hModel : S.hGauge;
+    const place = state.name || (state.model && state.model.mode === 'snap' ? 'Điểm biển gần ' + fmtCoord(state.lat, state.lon) : fmtCoord(state.lat, state.lon));
+    $('#title').textContent = place;
+    $('#subtitle').textContent = `${fmtDate(S.t0)} – ${fmtDate(S.t1 - 1)} · ${state.days} ngày · giờ ${tzLabel(state.tz)} · độ cao tính bằng mét so với ${D.label === 'LAT' ? 'mực nước thấp nhất thiên văn (LAT)' : D.label === 'CD' ? 'số 0 hải đồ của trạm (cùng mốc bảng thủy triều)' : 'mực nước biển trung bình (MSL)'}${primary === 'gauge' ? ' · theo hằng số trạm ' + state.gauge.name : ''}`;
+    // datum hint
+    const dm = state.datums[primary];
+    $('#datumHint').innerHTML = state.datum === 'LAT'
+      ? (dm ? `LAT ở điểm này thấp hơn MSL <b class="num">${NF2.format(-dm.LAT / 100)} m</b>. Mọi độ cao đã cộng thêm khoảng này.` : '<span class="loading">Đang tính LAT qua 18,61 năm…</span>')
+      : state.datum === 'CD'
+      ? (D.label === 'CD' ? `Số 0 hải đồ trạm ${esc(state.gauge.name)} thấp hơn MSL <b class="num">${NF2.format(-state.gauge.cd / 100)} m</b>: cùng mốc với bảng thủy triều Việt Nam.` : 'Mốc số 0 hải đồ hiện chỉ có cho trạm Sài Gòn và Vũng Tàu (nguồn “Trạm đo”). Đang hiển thị theo MSL.')
+      : 'Độ cao so với mực nước biển trung bình tại điểm.';
+    // source bar
+    const sb = $('#srcbar'); sb.hidden = !(state.gauge && state.model);
+    if (state.gauge) { $('#srcGauge').textContent = 'Trạm ' + state.gauge.name + ' · ' + NF1.format(state.gauge.distKm) + ' km'; $('#srcGauge').title = $('#srcGauge').textContent; }
+    for (const b of $('#source').children) b.setAttribute('aria-pressed', String(b.dataset.v === primary));
+    renderFacts(S, hp, D);
+    renderChart(S, D);
+    renderDaily(S, D);
+    renderHc();
+  }
+
+  function renderFacts(S, hp, D) {
+    const primary = S.primary; const hc = primary === 'model' ? state.model.hc : gaugeHc();
+    const tt = tideType(hc);
+    let maxR = 0, maxDay = 0;
+    for (let i = 1; i < S.ex.length; i++) { const r = Math.abs(S.ex[i].h - S.ex[i - 1].h); if (r > maxR) { maxR = r; maxDay = S.ex[i].t; } }
+    const now = Date.now(); let nowHtml;
+    if (now >= S.t0 && now <= S.t1) {
+      const hAt = (t) => primary === 'model' ? E.heightAt(state.P, E.astro(t)) : state.gauge.predictor.getWaterLevelAtTime({ time: new Date(t) }).level;
+      const h0 = hAt(now), h1 = hAt(now + 10 * MIN); const next = S.ex.find((e) => e.t > now);
+      nowHtml = `<dd><span class="num">${fmtM(h0 + D.off)} m</span> <span class="note">${h1 > h0 ? '<span class="up">▲ đang lên</span>' : '▼ đang xuống'}</span></dd>` + (next ? `<dd class="note">${next.high ? 'Nước lớn' : 'Nước ròng'} kế tiếp ${fmtHM(next.t)} (${fmtDay(next.t)}), ${fmtM(next.h + D.off)} m</dd>` : '');
+    } else {
+      const f = S.ex[0]; nowHtml = f ? `<dd class="num">${fmtHM(f.t)} ${fmtDay(f.t)}</dd><dd class="note">${f.high ? 'Nước lớn' : 'Nước ròng'} đầu kỳ, ${fmtM(f.h + D.off)} m</dd>` : '<dd>—</dd>';
+    }
+    const dm = state.datums[primary];
+    const datHtml = dm ? `<dd class="num">${fmtM(dm.LAT)} / ${fmtM(dm.HAT)} m</dd><dd class="note">so với MSL; biên độ tối đa ${NF2.format((dm.HAT - dm.LAT) / 100)} m (18,61 năm)</dd>`
+      : (primary === 'gauge' && state.gauge.latOff != null ? `<dd class="num">${fmtM(state.gauge.latOff)} m</dd><dd class="note">LAT của trạm theo nguồn</dd>` : '<dd class="loading">Đang tính…</dd>');
+    $('#facts').innerHTML =
+      `<div class="fact"><dt>Chế độ triều</dt><dd>${tt.name}</dd><dd class="note">F = (K1+O1)/(M2+S2) = <span class="num">${NF2.format(tt.F)}</span></dd></div>` +
+      `<div class="fact"><dt>Biên độ lớn nhất trong kỳ</dt><dd class="num">${NF2.format(maxR / 100)} m</dd><dd class="note">${maxDay ? 'quanh ' + fmtDay(maxDay) : ''}</dd></div>` +
+      `<div class="fact"><dt>${now >= S.t0 && now <= S.t1 ? 'Bây giờ ' + fmtHM(now) : 'Mốc đầu kỳ'}</dt>${nowHtml}</div>` +
+      `<div class="fact"><dt>LAT / HAT</dt>${datHtml}</div>`;
+  }
+
+  // ---------------- chart
+  let chartState = null;
+  function niceStep(span, target) { const raw = span / target; const p = Math.pow(10, Math.floor(Math.log10(raw))); for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= raw) return m * p; return 10 * p; }
+  function renderChart(S, D) {
+    const el = $('#chart'); const W = Math.max(280, el.clientWidth || 600); const H = W < 520 ? 230 : 290;
+    const m = { l: 44, r: 10, t: 22, b: 30 };
+    const pw = W - m.l - m.r, ph = H - m.t - m.b;
+    const prim = S.primary === 'model' ? S.hModel : S.hGauge;
+    const sec = state.overlay ? (S.primary === 'model' ? S.hGauge : S.hModel) : null;
+    let lo = Infinity, hi = -Infinity;
+    for (const arr of [prim, sec]) if (arr) for (const v of arr) { if (v < lo) lo = v; if (v > hi) hi = v; }
+    lo = (lo + D.off) / 100; hi = (hi + D.off) / 100; const padv = (hi - lo) * 0.1 || 0.1; lo -= padv; hi += padv;
+    const st = niceStep(hi - lo, H < 250 ? 4 : 5); const y0 = Math.floor(lo / st) * st, y1 = Math.ceil(hi / st) * st;
+    const X = (t) => m.l + (t - S.t0) / (S.t1 - S.t0) * pw, Y = (v) => m.t + (1 - (v - y0) / (y1 - y0)) * ph;
+    const path = (arr) => { let d = ''; for (let i = 0; i < S.times.length; i++) d += (i ? 'L' : 'M') + X(S.times[i]).toFixed(1) + ',' + Y((arr[i] + D.off) / 100).toFixed(1); return d; };
+    let g = '';
+    // y grid
+    for (let v = y0; v <= y1 + 1e-9; v += st) { const y = Y(v); g += `<line x1="${m.l}" x2="${W - m.r}" y1="${y}" y2="${y}" stroke="var(--rule)" stroke-width="1"${Math.abs(v) < 1e-9 ? ' stroke-dasharray="0"' : ''}/><text x="${m.l - 6}" y="${y + 3.5}" text-anchor="end">${NF2.format(v).replace(/,?0+$/, '').replace(/^-/, MINUS) || '0'}</text>`; }
+    g += `<text x="${m.l - 6}" y="${m.t - 9}" text-anchor="end">m</text>`;
+    // x ticks at local midnights
+    const dayW = pw / state.days; const every = dayW < 26 ? 3 : dayW < 48 ? 2 : 1;
+    for (let d = 0; d <= state.days; d++) {
+      const t = S.t0 + d * DAY; const x = X(t);
+      g += `<line x1="${x}" x2="${x}" y1="${m.t}" y2="${m.t + ph}" stroke="var(--rule)" stroke-width="${d % every ? 0.5 : 1}"/>`;
+      if (d < state.days && d % every === 0) g += `<text x="${x + 3}" y="${H - 10}">${fmtDay(t)}</text>`;
+    }
+    if (state.days <= 3) for (let hh = 6; hh < state.days * 24; hh += 6) { if (hh % 24 === 0) continue; const x = X(S.t0 + hh * HOUR); g += `<line x1="${x}" x2="${x}" y1="${m.t + ph}" y2="${m.t + ph + 4}" stroke="var(--rule-strong)"/><text x="${x}" y="${H - 10}" text-anchor="middle" opacity=".75">${pad2(hh % 24)}h</text>`; }
+    // area + lines
+    const base = Y(y0);
+    const dp = path(prim);
+    g += `<path d="${dp}L${X(S.times[S.times.length - 1]).toFixed(1)},${base}L${X(S.times[0]).toFixed(1)},${base}Z" fill="var(--water-soft)"/>`;
+    if (sec) g += `<path d="${path(sec)}" fill="none" stroke="var(--gauge)" stroke-width="1.6" stroke-dasharray="5 4"/>`;
+    g += `<path d="${dp}" fill="none" stroke="var(--water)" stroke-width="2" stroke-linejoin="round"/>`;
+    // now
+    const now = Date.now();
+    if (now > S.t0 && now < S.t1) { const x = X(now); g += `<line x1="${x}" x2="${x}" y1="${m.t - 6}" y2="${m.t + ph}" stroke="var(--overprint)" stroke-width="1.5" stroke-dasharray="4 3"/><text x="${x}" y="${m.t - 9}" text-anchor="middle" style="fill:var(--overprint);font-weight:600">bây giờ</text>`; }
+    // extremes
+    const showLab = S.ex.length <= 16;
+    for (const e of S.ex) {
+      const x = X(e.t), y = Y((e.h + D.off) / 100);
+      g += e.high ? `<circle cx="${x}" cy="${y}" r="4" fill="var(--water)" stroke="var(--surface)" stroke-width="1.5"/>` : `<circle cx="${x}" cy="${y}" r="3.6" fill="var(--surface)" stroke="var(--water)" stroke-width="2"/>`;
+      if (showLab) {
+        const ty = e.high ? y - 9 : y + 17; const anchor = x < m.l + 30 ? 'start' : x > W - m.r - 30 ? 'end' : 'middle';
+        g += `<text class="lab${e.high ? ' hw' : ''}" x="${x}" y="${ty}" text-anchor="${anchor}">${fmtHM(e.t)} · ${fmtM(e.h + D.off, false)}</text>`;
+      }
+    }
+    g += `<line id="xh" x1="0" x2="0" y1="${m.t}" y2="${m.t + ph}" stroke="var(--ink-3)" stroke-width="1" visibility="hidden"/><circle id="xd" r="4.5" fill="var(--water)" stroke="var(--surface)" stroke-width="2" visibility="hidden"/><circle id="xd2" r="4" fill="var(--gauge)" stroke="var(--surface)" stroke-width="2" visibility="hidden"/>`;
+    g += `<rect id="hit" x="${m.l}" y="0" width="${pw}" height="${H}" fill="transparent" style="cursor:crosshair"/>`;
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Biểu đồ mực nước ${esc($('#title').textContent)}">${g}</svg><div class="tip" id="tip" hidden></div>`;
+    chartState = { S, D, X, Y, m, pw, W, prim, sec };
+    const hit = el.querySelector('#hit');
+    hit.addEventListener('pointermove', onHover); hit.addEventListener('pointerleave', () => { el.querySelector('#tip').hidden = true; for (const id of ['#xh', '#xd', '#xd2']) el.querySelector(id).setAttribute('visibility', 'hidden'); });
+    $('#chartMeta').textContent = `${S.primary === 'model' ? 'Mô hình EOT20' : 'Trạm ' + state.gauge.name} · bước ${S.times.length > 1 ? Math.round((S.times[1] - S.times[0]) / MIN) : 0} phút`;
+    const lg = [`<span><i></i>${S.primary === 'model' ? 'Mô hình EOT20' : 'Hằng số trạm ' + esc(state.gauge.name)}</span>`];
+    if (sec) lg.push(`<span><i class="g"></i>${S.primary === 'model' ? 'Trạm ' + esc(state.gauge.name) + ' (' + NF1.format(state.gauge.distKm) + ' km)' : 'Mô hình EOT20'}</span>`);
+    lg.push('<span><i class="hw"></i>Nước lớn</span><span><i class="lw"></i>Nước ròng</span>');
+    if (now > S.t0 && now < S.t1) lg.push('<span><i class="now"></i>Bây giờ</span>');
+    $('#chartLegend').innerHTML = lg.join('');
+  }
+  function onHover(e) {
+    const c = chartState; if (!c) return; const el = $('#chart');
+    const svg = el.querySelector('svg'); const r = svg.getBoundingClientRect(); const sx = (e.clientX - r.left) * (c.W / r.width);
+    const t = c.S.t0 + (sx - c.m.l) / c.pw * (c.S.t1 - c.S.t0);
+    const dt = c.S.times[1] - c.S.times[0]; const i = Math.max(0, Math.min(c.S.times.length - 1, Math.round((t - c.S.t0) / dt)));
+    const x = c.X(c.S.times[i]); const v = (c.prim[i] + c.D.off) / 100;
+    const xh = el.querySelector('#xh'), xd = el.querySelector('#xd'), xd2 = el.querySelector('#xd2');
+    xh.setAttribute('x1', x); xh.setAttribute('x2', x); xh.setAttribute('visibility', 'visible');
+    xd.setAttribute('cx', x); xd.setAttribute('cy', c.Y(v)); xd.setAttribute('visibility', 'visible');
+    let extra = '';
+    if (c.sec) { const v2 = (c.sec[i] + c.D.off) / 100; xd2.setAttribute('cx', x); xd2.setAttribute('cy', c.Y(v2)); xd2.setAttribute('visibility', 'visible'); extra = `<div><i style="background:var(--gauge)"></i>${c.S.primary === 'model' ? 'Trạm' : 'Mô hình'} <span class="v">${fmtM(v2 * 100)} m</span></div>`; }
+    const tip = el.querySelector('#tip'); tip.hidden = false;
+    tip.innerHTML = `<div class="t">${fmtDay(c.S.times[i])} · ${fmtHM(c.S.times[i])}</div><div><i style="background:var(--water)"></i>${c.S.primary === 'model' ? 'Mô hình' : 'Trạm'} <span class="v">${fmtM(v * 100)} m</span></div>${extra}`;
+    const px = x / c.W * r.width; const tw = tip.offsetWidth;
+    tip.style.left = Math.max(0, Math.min(r.width - tw, px + 12 > r.width - tw ? px - tw - 12 : px + 12)) + 'px'; tip.style.top = '4px';
+  }
+
+  // ---------------- daily table
+  function renderDaily(S, D) {
+    const rows = []; let maxRange = 0; const todayKey = fmtDate(Date.now());
+    for (let d = 0; d < state.days; d++) {
+      const a = S.t0 + d * DAY, b = a + DAY; const ex = S.ex.filter((e) => e.t >= a && e.t < b);
+      const hw = ex.filter((e) => e.high), lw = ex.filter((e) => !e.high);
+      const range = hw.length && lw.length ? Math.max(...hw.map((e) => e.h)) - Math.min(...lw.map((e) => e.h)) : 0;
+      maxRange = Math.max(maxRange, range); rows.push({ a, hw, lw, range });
+    }
+    const ranges = rows.map((r) => r.range).filter((x) => x > 0); const minRange = Math.min(...ranges);
+    const body = rows.map((r) => {
+      const p = parts(r.a + 12 * HOUR); const lu = AmLich.solar2lunar(p.d, p.mo, p.y, 7);
+      const moon = lu.day === 1 ? '<span class="moon">sóc</span>' : lu.day === 15 ? '<span class="moon">vọng</span>' : '';
+      const exs = (l) => l.map((e) => `<span class="ex">${fmtHM(e.t)}<span class="h">${fmtM(e.h + D.off, false)}</span></span>`).join('') || '<span class="small">—</span>';
+      const tag = state.days >= 7 && r.range >= maxRange * 0.93 ? ' <span class="chip spring">cường</span>' : state.days >= 7 && r.range <= minRange * 1.07 ? ' <span class="chip neap">kém</span>' : '';
+      const w = maxRange ? Math.max(2, r.range / maxRange * 70) : 0;
+      return `<tr${fmtDate(r.a) === todayKey ? ' class="today"' : ''}><td class="day">${WD[p.wd]} ${p.d}/${p.mo}<span class="lunar">${lu.day}/${lu.month}${lu.leap ? ' nhuận' : ''} âl${moon}</span></td><td>${exs(r.hw)}</td><td>${exs(r.lw)}</td><td><div class="rbar"><span class="b" style="width:${w}px"></span><span class="n">${NF2.format(r.range / 100)} m</span>${tag}</div></td></tr>`;
+    }).join('');
+    $('#daily').innerHTML = `<thead><tr><th>Ngày</th><th>Nước lớn · m</th><th>Nước ròng · m</th><th>Biên độ ngày</th></tr></thead><tbody>${body}</tbody>`;
+    $('#tableMeta').textContent = `giờ ${tzLabel(state.tz)} · mốc ${D.label}`;
+  }
+
+  // ---------------- constants table
+  function renderHc() {
+    const primary = state.series.primary;
+    if (primary === 'gauge') {
+      const list = [...state.gauge.hc].sort((a, b) => b.amplitude - a.amplitude).slice(0, 20); const mx = list[0].amplitude;
+      $('#hcTable').innerHTML = `<thead><tr><th>Sóng</th><th class="num">H (cm)</th><th class="num">g (°)</th><th></th></tr></thead><tbody>` + list.map((c) => `<tr><td class="cname">${esc(c.name)}</td><td class="num mono">${NF1.format(c.amplitude)}</td><td class="num mono">${NF1.format(c.phase)}</td><td style="width:40%"><div class="abar" style="width:${c.amplitude / mx * 100}%"></div></td></tr>`).join('') + '</tbody>';
+      $('#hcMeta').textContent = `Trạm ${state.gauge.name} · ${state.gauge.hc.length} sóng (hiển thị 20 sóng lớn nhất)`;
+      $('#hcNote').textContent = 'Hằng số phân tích từ chuỗi mực nước thực đo tại trạm; pha g là góc trễ so với kinh tuyến Greenwich (giờ UTC).';
+      return;
+    }
+    const hc = state.model.hc; const rows = Object.keys(CINFO).map((k) => {
+      const [re, im] = hc[k]; const A = Math.hypot(re, im); let g = -Math.atan2(im, re) * 180 / Math.PI; g = (g + 360) % 360;
+      const sp = E.speed(E.MAJOR[k]); const per = 360 / sp; return { k, A, g, per };
+    }).sort((a, b) => b.A - a.A);
+    const mx = rows[0].A;
+    const perTxt = (h) => h > 48 ? NF1.format(h / 24) + ' ngày' : NF2.format(h) + ' giờ';
+    $('#hcTable').innerHTML = `<thead><tr><th>Sóng</th><th>Ý nghĩa</th><th class="num">Chu kỳ</th><th class="num">H (cm)</th><th class="num">g (°)</th><th></th></tr></thead><tbody>` +
+      rows.map((r) => `<tr><td class="cname">${CINFO[r.k][0]}</td><td>${CINFO[r.k][1]}</td><td class="num mono">${perTxt(r.per)}</td><td class="num mono">${NF1.format(r.A)}</td><td class="num mono">${NF1.format(r.g)}</td><td style="width:18%;min-width:60px"><div class="abar" style="width:${r.A / mx * 100}%"></div></td></tr>`).join('') + '</tbody>';
+    $('#hcMeta').textContent = state.model.mode === 'snap' ? `nút lưới ${fmtCoord(state.model.nodeLat, state.model.nodeLon)}` : 'nội suy tại điểm chọn';
+    $('#hcNote').textContent = 'H: biên độ; g: góc pha trễ so với kinh tuyến Greenwich (giờ UTC). Sa và Ssa phản ánh dao động mùa quan trắc bằng vệ tinh, không thuần thiên văn.';
+  }
+
+  // ---------------------------------------------------------------- CSV
+  function csvExtremes() {
+    const S = state.series, D = currentDatum();
+    const lines = [`thoi_gian_${tzLabel(state.tz).replace(MINUS, '-')},loai,muc_nuoc_m_${D.label}`];
+    for (const e of S.ex) { const p = parts(e.t + 30000); lines.push(`${p.y}-${pad2(p.mo)}-${pad2(p.d)} ${pad2(p.h)}:${pad2(p.mi)},${e.high ? 'nuoc_lon' : 'nuoc_rong'},${((e.h + D.off) / 100).toFixed(3)}`); }
+    return lines.join('\n');
+  }
+  function csvSeries() {
+    const S = state.series, D = currentDatum(); const step = state.step * MIN; const times = [];
+    for (let t = S.t0; t <= S.t1; t += step) times.push(t);
+    const hm = state.model ? E.predict(state.P, times) : null;
+    const hg = state.gauge ? gaugeAt(times) : null;
+    const cols = [`thoi_gian_${tzLabel(state.tz).replace(MINUS, '-')}`]; if (hm) cols.push(`mo_hinh_EOT20_m_${D.label}`); if (hg) cols.push(`tram_${state.gauge.name.replace(/[^\p{L}\p{N}]+/gu, '_')}_m_${D.label}`);
+    const lines = [cols.join(',')];
+    times.forEach((t, i) => { const p = parts(t); const row = [`${p.y}-${pad2(p.mo)}-${pad2(p.d)} ${pad2(p.h)}:${pad2(p.mi)}`]; if (hm) row.push(((hm[i] + D.off) / 100).toFixed(3)); if (hg) row.push(((hg[i] + D.off) / 100).toFixed(3)); lines.push(row.join(',')); });
+    return lines.join('\n');
+  }
+  async function copyText(txt, label) {
+    const out = $('#csvOut'); const msg = $('#copyMsg');
+    try { await navigator.clipboard.writeText(txt); msg.textContent = `Đã sao chép ${label} (${txt.split('\n').length - 1} dòng).`; out.hidden = true; }
+    catch (e) { out.hidden = false; out.value = txt; out.focus(); out.select(); msg.textContent = 'Trình duyệt chặn sao chép tự động — dữ liệu đã được chọn sẵn bên dưới, nhấn Ctrl/⌘+C.'; }
+  }
+
+  // ---------------------------------------------------------------- controls
+  function initControls() {
+    const ps = $('#preset');
+    ps.innerHTML = '<option value="">— Chọn nhanh —</option>' + (() => { let i = 0; return PRESETS.map(([g, l]) => `<optgroup label="${g}">` + l.map(([n]) => `<option value="${i++}">${esc(n)}</option>`).join('') + '</optgroup>').join(''); })();
+    ps.onchange = () => { if (ps.value === '') return; const p = ALLPRESETS[+ps.value]; Map2.center(p[1], p[2], 6); select(p[1], p[2], p[0]); };
+    const go = () => { const c = parseCoords($('#coord').value); if (!c) { const e = $('#coordErr'); e.textContent = 'Chưa đọc được tọa độ. Nhập dạng “10.34, 107.07” (vĩ độ, kinh độ) hoặc 10°20\'N 107°04\'E.'; e.hidden = false; return; } Map2.center(c.lat, c.lon, 5.5); select(c.lat, c.lon, null); };
+    $('#go').onclick = go; $('#coord').addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+    const tz = $('#tz'); const zones = [];
+    for (let m = -12 * 60; m <= 14 * 60; m += 60) zones.push(m); zones.push(-210, 210, 270, 330, 345, 390, 525, 570, 630, 765); zones.sort((a, b) => a - b);
+    tz.innerHTML = zones.map((m) => `<option value="${m}">${tzLabel(m)}${m === 420 ? ' (Việt Nam)' : m === 0 ? ' (Greenwich)' : ''}</option>`).join('');
+    tz.value = String(state.tz); tz.onchange = () => { state.tz = +tz.value; persist(); compute(); };
+    const st = $('#start'); st.value = state.start; st.onchange = () => { if (st.value) { state.start = st.value; compute(); } };
+    const seg = (id, key, cb) => { const el = $(id); const upd = () => { for (const b of el.children) b.setAttribute('aria-pressed', String(String(state[key]) === b.dataset.v)); }; el.onclick = (e) => { const b = e.target.closest('button'); if (!b) return; state[key] = key === 'days' ? +b.dataset.v : b.dataset.v; upd(); persist(); cb(); }; upd(); return upd; };
+    seg('#days', 'days', compute); seg('#datum', 'datum', render);
+    $('#source').onclick = (e) => { const b = e.target.closest('button'); if (!b) return; state.source = b.dataset.v; renderStatus(); compute(); };
+    $('#step').onchange = (e) => { state.step = +e.target.value; };
+    $('#copyEx').onclick = () => copyText(csvExtremes(), 'bảng nước lớn/ròng');
+    $('#copyTs').onclick = () => copyText(csvSeries(), 'chuỗi mực nước');
+    let rt = 0; new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(() => { if (state.series) renderChart(state.series, currentDatum()); }, 80); }).observe($('#chart'));
+    const themeCb = () => { LUT = null; drawLegend(); Map2.themeChanged(); };
+    try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', themeCb); } catch (e) { /* old browsers */ }
+    new MutationObserver(themeCb).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  }
+
+  async function boot() {
+    initControls(); drawLegend();
+    $('#coord').value = state.lat.toFixed(4) + ', ' + state.lon.toFixed(4);
+    const p = ALLPRESETS.findIndex((x) => x[1] === state.lat && x[2] === state.lon); if (p >= 0) $('#preset').value = String(p);
+    Map2.resize(); Map2.center(state.lat, state.lon);
+    if (typeof DecompressionStream === 'undefined' && typeof pako === 'undefined') {
+      await new Promise((res) => { const s = document.createElement('script'); s.src = 'vendor/pako.min.js'; s.onload = res; s.onerror = res; document.head.appendChild(s); });
+    }
+    Map2.init().catch(() => {});
+    const stationsP = loadStations().catch(() => {});
+    await Promise.race([stationsP, new Promise((r) => setTimeout(r, 1500))]);
+    select(state.lat, state.lon, state.name);
+    stationsP.then(() => { if (!state.gauge && state.model) { const n = nearestStation(state.lat, state.lon); if (n) { state.gauge = gaugeFrom(n.s, n.d); state.overlay = false; renderStatus(); compute(); computeDatums(); } } });
+  }
+  boot();
+})();
+
+</script>
+
+<script>
+(function () {
+  var root = document.documentElement, seg = document.getElementById('theme');
+  function cur() { return root.getAttribute('data-theme') || 'auto'; }
+  function paint() { var c = cur(); for (var b of seg.children) b.setAttribute('aria-pressed', String(b.dataset.v === c)); }
+  seg.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return; var v = b.dataset.v;
+    if (v === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', v);
+    try { localStorage.setItem('connuoc-theme', v); } catch (err) {}
+    paint();
+  });
+  paint();
+})();
+</script>
+</body></html>
+<script src="android.js"></script>

@@ -1,0 +1,54 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'io.github.nguyengiathong.connuoc'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'io.github.nguyengiathong.connuoc'
+        minSdk 24
+        targetSdk 35
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    signingConfigs {
+        // Set these in CI (or ~/.gradle/gradle.properties) to sign with your own key, so that
+        // new builds install over old ones. Without them the release APK uses the debug key.
+        def ks = System.getenv('CONNUOC_KEYSTORE')
+        if (ks) {
+            release {
+                storeFile file(ks)
+                storePassword System.getenv('CONNUOC_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('CONNUOC_KEY_ALIAS')
+                keyPassword System.getenv('CONNUOC_KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.findByName('release') ?: signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    androidResources {
+        // the model data is already gzip-compressed
+        noCompress '.bin', '.woff2'
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core:1.13.1'
+    implementation 'androidx.webkit:webkit:1.12.1'
+}

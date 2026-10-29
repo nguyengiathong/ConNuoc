@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light/dark parents tell the WebView which prefers-color-scheme to report ("Theo máy"). -->
+    <style name="Theme.ConNuoc" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/page_background</item>
+    </style>
+</resources>
