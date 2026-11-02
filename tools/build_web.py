@@ -74,6 +74,71 @@ TOUCH_FIXES = [
      "chart resize observer"),
 ]
 
+# For each day: the time of the lowest low water and the window from 3 hours before to 3 hours
+# after it, as a table under the chart and as shaded bands on the chart.
+LOW_WINDOW = [
+    (".chart-legend i.now {",
+     ".chart-legend i.win { width: 14px; height: 10px; border: 0; border-radius: 2px; background: var(--overprint-soft); outline: 1px solid var(--overprint); outline-offset: -1px; vertical-align: -1px; }\n"
+     ".oday { display: block; color: var(--ink-3); font-family: var(--f-mono); font-size: 12px; }\n"
+     ".chart-legend i.now {",
+     "chart legend CSS"),
+    ("""    <div class="card">
+      <div class="card-h"><h3>Nước lớn, nước ròng theo ngày</h3>""",
+     """    <div class="card">
+      <div class="card-h"><h3>Ròng thấp nhất trong ngày ± 3 giờ</h3><span class="meta" id="lowMeta"></span></div>
+      <div class="tbl-wrap"><table id="lowWin"></table></div>
+      <p class="small">Giờ nước ròng thấp nhất của mỗi ngày và khoảng từ 3 giờ trước đến 3 giờ sau mốc đó (vùng tô trên biểu đồ).</p>
+    </div>
+    <div class="card">
+      <div class="card-h"><h3>Nước lớn, nước ròng theo ngày</h3>""",
+     "daily table card"),
+    ("    renderChart(S, D);\n    renderDaily(S, D);",
+     "    renderChart(S, D);\n    renderLowWindows(S, D);\n    renderDaily(S, D);",
+     "render() calls"),
+    ("    // area + lines\n",
+     """    // windows 3 hours either side of each day's lowest low water
+    for (const { low } of dailyLows(S)) {
+      if (!low) continue; const x0 = Math.max(m.l, X(low.t - LOW_WIN)), x1 = Math.min(W - m.r, X(low.t + LOW_WIN));
+      if (x1 > x0) g += `<rect x="${x0.toFixed(1)}" y="${m.t}" width="${(x1 - x0).toFixed(1)}" height="${ph}" fill="var(--overprint-soft)"/>`;
+    }
+    // area + lines
+""",
+     "chart area"),
+    ("""lg.push('<span><i class="hw"></i>Nước lớn</span><span><i class="lw"></i>Nước ròng</span>');""",
+     """lg.push('<span><i class="hw"></i>Nước lớn</span><span><i class="lw"></i>Nước ròng</span><span><i class="win"></i>Ròng thấp nhất ± 3 giờ</span>');""",
+     "chart legend"),
+    ("  // ---------------- daily table\n",
+     """  // ---------------- lowest low water of each day, with the window 3 hours either side
+  const LOW_WIN = 3 * HOUR;
+  function dailyLows(S) {
+    const out = [];
+    for (let d = 0; d < state.days; d++) {
+      const a = S.t0 + d * DAY, b = a + DAY; let low = null;
+      for (const e of S.ex) if (!e.high && e.t >= a && e.t < b && (!low || e.h < low.h)) low = e;
+      out.push({ a, low });
+    }
+    return out;
+  }
+  function renderLowWindows(S, D) {
+    const now = Date.now(), todayKey = fmtDate(now);
+    // window ends on another date than the low itself get that date underneath
+    const at = (t, ref) => `<span class="num">${fmtHM(t)}</span>${fmtDate(t) !== fmtDate(ref) ? `<span class="oday">${fmtDay(t)}</span>` : ''}`;
+    const body = dailyLows(S).map(({ a, low }) => {
+      const p = parts(a);
+      const cells = low
+        ? `<td><span class="ex">${fmtHM(low.t)}<span class="h">${fmtM(low.h + D.off, false)}</span></span>${now >= low.t - LOW_WIN && now <= low.t + LOW_WIN ? '<span class="chip spring">đang trong khung</span>' : ''}</td><td>${at(low.t - LOW_WIN, low.t)}</td><td>${at(low.t + LOW_WIN, low.t)}</td>`
+        : '<td colspan="3"><span class="small">Không có nước ròng trong ngày</span></td>';
+      return `<tr${fmtDate(a) === todayKey ? ' class="today"' : ''}><td class="day">${WD[p.wd]} ${p.d}/${p.mo}</td>${cells}</tr>`;
+    }).join('');
+    $('#lowWin').innerHTML = `<thead><tr><th>Ngày</th><th>Thấp nhất · m</th><th>Từ</th><th>Đến</th></tr></thead><tbody>${body}</tbody>`;
+    $('#lowMeta').textContent = `giờ ${tzLabel(state.tz)} · mốc ${D.label}`;
+  }
+
+  // ---------------- daily table
+""",
+     "daily table section"),
+]
+
 
 def fetch(url, headers=None):
     req = urllib.request.Request(url, headers=headers or {})
@@ -144,7 +209,7 @@ def main():
     html = replace_once(html, LOADER_OLD, LOADER_NEW, "embedded-data loader")
     html = replace_once(html, FONT_LINKS_OLD, FONT_LINKS_NEW, "Google Fonts link")
     html = replace_once(html, PAKO_OLD, PAKO_NEW, "pako CDN URL")
-    for old, new, what in TOUCH_FIXES:
+    for old, new, what in TOUCH_FIXES + LOW_WINDOW:
         html = replace_once(html, old, new, what)
     html = html.rstrip("\n") + "\n" + SHIM
 
